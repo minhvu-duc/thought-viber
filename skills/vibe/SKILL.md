@@ -35,9 +35,9 @@ The prep stays durable after the beta is reaped; `reap` lists it so the owner ca
 - All feature code lives in `<beta_root>/<feature>/`. Wiring into the app (route registration, menu entry, DI binding, registering an extension) is the only allowed change outside it. Keep it to the fewest lines possible and mark each with a `thought-viber:beta:<feature>` comment so `reap` and `harden` can find it.
 - Durable code never depends on beta code.
 - Beta calls durable code only through `public_interfaces`. If one is missing, stop and do durable prep; never reach into internals.
-- No core schema changes. Beta data goes in its own namespace (`beta_<feature>_*` tables, collections or keys).
-- Nothing on the safety floor.
-- Everything behind flag `beta.<feature>`, default off. Turning it off must remove the feature from every user path (kill switch); for an extension point, flag off means the durable default runs.
+- Beta data goes in its own namespace: `beta_<feature>_*` tables, collections or keys. If it must sit on existing core data, add new nullable `beta_<feature>_*` columns (or fields) and mark their migration `thought-viber:beta:<feature>`. Never alter, rename or drop an existing column. If neither works, stop and discuss with the user.
+- Nothing in config's `safety_floor` list or under `floor_paths`.
+- Everything behind flag `beta.<feature>`, default off. Turning the flag on is what makes deployed code live; turning it off is the kill switch and must hide the feature from every user path (instantly with a runtime `flag_system`, on the next deploy with a config one); for an extension point, flag off means the durable default runs. The code stays until `reap` deletes it or `harden` replaces it.
 - A visible "Beta" label wherever users meet the feature.
 - New dependencies only when necessary; prefer what the repo already uses.
 

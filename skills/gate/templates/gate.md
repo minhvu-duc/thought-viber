@@ -9,7 +9,8 @@
 |---|---|---|
 | Boundary (imports) | | |
 | Changes outside beta root are marked wiring only | | |
-| No floor / core schema changes | | |
+| Safety floor and floor_paths untouched | | |
+| Schema changes only add beta_<feature>_* tables/columns | | |
 | No secrets | | |
 | Dependency audit | | |
 | Flag exists, default off, flag-off test | | |

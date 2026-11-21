@@ -42,10 +42,10 @@ If we ship <X>, then <Y users> will <Z>.
 |---|---|---|---|
 
 ## Data
-<what the beta stores, under `beta_<slug>_*`, and whether it must survive a rebuild>
+<what the beta stores: new `beta_<slug>_*` tables/collections/keys, or new `beta_<slug>_*` columns on existing core tables (which ones). Whether it must survive a rebuild.>
 
 ## Safety floor check
-<how the feature stays off the floor, or what was cut to make it so>
+<checked against config `safety_floor` and `floor_paths`: how the feature stays off the floor, or what was cut to make it so>
 
 ## Amendments
 <!-- YYYY-MM-DD — change — reason — approved by. Never edit thresholds above after confirmation. -->

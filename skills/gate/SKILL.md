@@ -11,10 +11,11 @@ Best effort, with a hard floor. Gate reports; it never fixes. Fixes go back thro
 
 - Boundary check passes: no durable → beta imports; beta imports only `public_interfaces`.
 - Changes outside `<beta_root>/<feature>/` are only wiring lines marked `thought-viber:beta:<feature>`. Durable prep listed in probe.md is not part of the beta diff: it must already be merged through its own reviewed change.
-- No changes to `floor_paths`, the core schema, or migrations outside the `beta_<feature>_*` namespace.
+- Nothing in config's `safety_floor` list is changed, and nothing under `floor_paths`.
+- Schema changes only add `beta_<feature>_*` tables, collections, keys, or new nullable `beta_<feature>_*` columns on existing tables, in migrations marked `thought-viber:beta:<feature>`. No existing column is altered, renamed or dropped.
 - No secrets in the diff (gitleaks or trufflehog if available, otherwise a pattern scan).
 - New dependencies are listed and audited with the ecosystem's tool (npm audit, pip-audit, etc.); any high or critical = FAIL.
-- Flag `beta.<feature>` exists and defaults off; the flag-off test passes.
+- Flag `beta.<feature>` exists and defaults off; the flag-off test passes (turning the flag off hides the feature from every user path).
 - The telemetry test passes for every event in probe.md.
 - The project's normal test command runs the acceptance tests in `acceptance_dir` (they appear in its output, count > 0), and they and the existing suite pass, with nothing skipped or deleted.
 
@@ -37,4 +38,4 @@ Write `<artifacts_root>/<feature>/gate.md` from `templates/gate.md`: date, commi
 - Never mark PASS with a critical or high finding open.
 - A human may accept a medium or low finding; record who and why.
 
-On PASS, tell the user the beta is ready and hand off to `launch`. Any later change to beta code needs a new gate before launch, or while live.
+On PASS, tell the user the beta is ready to merge and deploy through the normal pipeline with its flag off, then `launch` turns it on. Any later change to beta code needs a new gate before launch, or while live.

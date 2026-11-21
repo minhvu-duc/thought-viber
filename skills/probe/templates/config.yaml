@@ -14,6 +14,10 @@ max_hardening_days: 45                # keep -> durable; past this, status and r
 acceptance_dir: .thought-viber/features/<feature>/evidence/acceptance
 
 flag_prefix: beta.                    # flag name = beta.<feature>
+# Where flags live. Your choice:
+#   runtime: a flag service or flags table; switching on/off takes effect instantly, no deploy
+#   config:  a file or env var in the repo; each switch ships through a normal deploy
+flag_system: ""                       # e.g. "runtime: launchdarkly", "runtime: flags table", "config: config/flags.yml"
 data_prefix: beta_                    # beta data namespace = beta_<feature>_*
 
 telemetry:
@@ -24,12 +28,14 @@ telemetry:
 # for betas (see vibe → Durable prep). Everything else in durable code is off limits.
 public_interfaces: []                 # e.g. ["src/api/public/**", "packages/sdk/**", "src/checkout/extensions/**"]
 
-# Safety floor: beta code may never change these.
+# Safety floor: beta code may never change these. The list below is the default;
+# add, remove or reword items to fit your project.
 safety_floor:
   - auth
   - payments
   - permissions
-  - pii
+  - pii handling
   - secrets
-  - core schema and migrations
-floor_paths: []                       # e.g. ["src/auth/**", "db/migrations/**", "src/billing/**"]
+  - existing core schema          # new namespaced beta_<feature>_* columns are allowed
+# Code paths that implement the safety floor. Beta changes here fail the gate.
+floor_paths: []                       # e.g. ["src/auth/**", "src/billing/**", "src/permissions/**"]

@@ -39,7 +39,7 @@ In `<artifacts_root>/<feature>/evidence/`:
 
 - **`behavior-spec.md`** — every user-visible behavior, each linked to its acceptance test. Review the acceptance tests now: add tests for behaviors users actually rely on that aren't covered (use telemetry to find them), and mark tests for behaviors nobody used as `drop`.
 - **`usage-map.md`** — each behavior or entry point with its share of usage. Anything below the sponsor's cut (default 5%) is a candidate to drop from the rebuild.
-- **`data-shape.md`** — beta tables or keys, their schema, row counts, and what must migrate into durable storage.
+- **`data-shape.md`** — beta tables, keys and namespaced columns on core tables, their schema, row counts, and what must migrate into durable storage.
 - **`feedback.md`** — incidents, bugs, support tickets and user comments from the window.
 
-The sponsor reviews the pack. It is the input to `harden`, alongside the beta code; the team decides whether to rebuild from the pack or adopt beta code.
+The sponsor reviews the pack. It is the input to `harden`; the beta code is only a reference.

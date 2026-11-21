@@ -1,15 +1,21 @@
 ---
 name: launch
-description: Turn a gated thought-viber beta on for its probe's exposure and start its clock. Use after gate passes, when the team is ready to let users try the beta; checks the gate is current, turns the flag on (or has a human do it), confirms telemetry arrives, and sets live_since, expires and status live.
+description: Turn a gated thought-viber beta's flag on for its probe's exposure and start its clock. Use after gate passes and the code is deployed with the flag off, when the team is ready to let users try the beta; checks the gate is current, turns the flag on (or has a human do it), confirms telemetry arrives, and sets live_since, expires and status live.
 ---
 
 # launch
 
-The beta's window starts the moment real users can reach it. `launch` makes that moment explicit, so `expires` and the verdict are measured from the right day.
+`launch` is not a deploy. The beta's code ships through the project's normal deploy with its flag off, so it is in production but no user can reach it. Turning the flag on is what makes the feature live for the probe's exposure, as long as the code is deployed. The beta's window starts at that moment, so `expires` and the verdict are measured from the right day.
+
+How the switch takes effect depends on `flag_system` in config:
+
+- **runtime** (a flag service or flags table): the feature goes live the moment the flag is switched on. No deploy.
+- **config** (a file or env var in the repo): switching the flag is a code change. It goes live when that change is deployed.
 
 ## 1. Check it's ready
 
 - probe.md has `status: building` and was confirmed by the sponsor.
+- The gated commit is deployed to production through the normal pipeline, with the flag off. If it isn't, stop: the user deploys first.
 - `gate.md` says PASS, and no file under `<beta_root>/<feature>/`, no marked wiring line and no acceptance test has changed since the gate's commit. If anything changed, stop and run `gate` again.
 - Capacity: count `building`, `live` and `hardening` probes (this one included). Over `max_live_betas`, stop and say which ones to `verdict` or `reap` first.
 - Telemetry: `telemetry.source` is set in config, or the user has said how they will report the numbers.
@@ -20,17 +26,17 @@ Show the sponsor the Exposure section of probe.md (segment, % rollout) and the f
 
 ## 3. Turn the flag on
 
-Set `beta.<feature>` to the confirmed exposure, and nothing wider, using the project's flag system:
+Set `beta.<feature>` to the confirmed exposure, and nothing wider, using the project's `flag_system`:
 
-- If a flag tool or CLI is connected and the user lets you use it, do it there.
-- Otherwise give the user the exact change (the flag, environment, targeting rule) and wait for them to confirm it's done.
+- **runtime:** if a flag tool or CLI is connected and the user lets you use it, do it there. Otherwise give the user the exact change (the flag, environment, targeting rule) and wait for them to confirm it's done.
+- **config:** make the flag change in the repo and hand it to the normal deploy. Wait for the user to confirm the deploy is live before the smoke check; the clock starts then, not at the commit.
 
 ## 4. Smoke check
 
 - Load the feature as a user inside the exposure (or ask the user to) and as one outside it: inside sees it with its Beta label, outside doesn't.
 - Confirm at least one `beta.<feature>.*` event has arrived in `telemetry.source`.
 
-If either fails, turn the flag off, leave status `building`, and report what failed.
+If either fails, turn the flag off (with a config flag, that is another deploy), leave status `building`, and report what failed.
 
 ## 5. Start the clock
 

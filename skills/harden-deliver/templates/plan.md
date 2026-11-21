@@ -12,9 +12,9 @@
 2.
 
 ## Beta removal in this slice
-- Approach: rebuild from evidence | adopt beta code (team's choice)
 - Reroute: <wiring change from beta to durable>
-- Remove: <beta files (rewritten or moved) and marked wiring lines covered by this intent>
+- Delete: <beta files and marked wiring lines covered by this intent>
+- Data cutover (data intent only): <migration, beta code switched to the durable interface, how we prove nothing writes beta_<feature>_* afterwards>
 
 ## Risks
 | Risk | Mitigation |

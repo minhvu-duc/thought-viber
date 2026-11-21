@@ -19,8 +19,8 @@ Scan `<artifacts_root>/*/probe.md`:
 ## 2. Remove (per feature)
 
 1. Confirm the flag `beta.<feature>` is off.
-2. **Data:** list everything in the `beta_<feature>_*` namespace with row counts. Ask the sponsor whether to export it, hand it to a pivot probe, or drop it. Never drop user data without explicit confirmation; exports go where the sponsor says.
-3. Delete `<beta_root>/<feature>/`, every `thought-viber:beta:<feature>` wiring line (use `build-notes.md` and a repo-wide search), the flag definition, the telemetry event definitions, and beta-only dependencies nothing else uses.
+2. **Data:** list everything in the `beta_<feature>_*` namespace with row counts: tables, collections, keys, and namespaced columns on core tables (with how many rows hold a value). Ask the sponsor whether to export it, hand it to a pivot probe, or drop it. Never drop user data without explicit confirmation; exports go where the sponsor says.
+3. Delete `<beta_root>/<feature>/`, a migration that drops the namespaced tables and columns (once the sponsor has decided on the data), every `thought-viber:beta:<feature>` wiring line (use `build-notes.md` and a repo-wide search), the flag definition, the telemetry event definitions, and beta-only dependencies nothing else uses.
 4. Keep the acceptance tests in `acceptance_dir` as records, but remove their registration from the test runner (the marked line noted in `build-notes.md`). Confirm the normal test command no longer runs them.
 5. Run the boundary check, the build and the full test suite; all must be green. If durable code referenced the removed code, the boundary leaked: stop and report it.
 6. List any durable prep from probe.md (facades, extension points). It is durable code and stays by default; ask its owner whether to keep it for future use or remove it in a separate change.

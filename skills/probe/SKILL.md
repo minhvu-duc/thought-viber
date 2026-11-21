@@ -9,13 +9,13 @@ A beta is a probe, not a prototype: it exists to answer one question — does th
 
 ## Steps
 
-1. **Load config.** Read `.thought-viber/config.yaml`. If it's missing, create it from `templates/config.yaml`: detect the stack, propose `beta_root`, `public_interfaces`, `floor_paths` and the telemetry source, and confirm them with the user.
+1. **Load config.** Read `.thought-viber/config.yaml`. If it's missing, create it from `templates/config.yaml`: detect the stack, propose `beta_root`, `public_interfaces`, `floor_paths`, `flag_system` and the telemetry source, show the default `safety_floor` list, and confirm all of them with the user. The user may add, remove or reword safety floor items. For `flag_system`, explain the trade-off and let the user choose: a runtime flag system switches the feature on and off instantly; flags in code or config only switch on the next deploy.
 
 2. **Check capacity.** Count features whose probe status is `building`, `live` or `hardening` (beta code is still in the repo for all three). At `max_live_betas`, stop, list them, and suggest running `verdict` or `reap` on one first.
 
 3. **Check past lessons.** Read `.thought-viber/LEARNINGS.md` if it exists. If a similar bet was already reaped, show the user that line before going further.
 
-4. **Check eligibility (safety floor).** If the feature must change anything on the safety floor — auth, payments, permissions, PII handling, secrets, core schema or migrations, or any `floor_paths` — it is not beta-eligible. Say so and offer either a narrower version that stays off the floor, or going straight to `harden` with a hand-written intent.
+4. **Check eligibility (safety floor).** If the feature must change anything in config's `safety_floor` list or under its `floor_paths`, it is not beta-eligible. Say so and offer either a narrower version that stays off the floor, or building it as durable code directly: `harden-define` from a hand-written intent, then `harden-deliver` (there is no beta to delete).
 
 5. **Sharpen the hypothesis with the user.** Ask until each of these is concrete:
    - **Exposure:** which users see it (segment, % rollout).
