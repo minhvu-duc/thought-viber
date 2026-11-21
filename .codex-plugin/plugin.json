@@ -2,16 +2,34 @@
   "name": "thought-viber",
   "version": "0.1.0",
   "description": "Ship features at vibe-coding speed without giving up ownership: probe, vibe, gate, launch, verdict, harden, reap and status skills for throwaway betas and durable rebuilds.",
-  "author": { "name": "minhvu-duc", "url": "https://github.com/minhvu-duc" },
+  "author": {
+    "name": "minhvu-duc",
+    "url": "https://github.com/minhvu-duc"
+  },
   "homepage": "https://github.com/minhvu-duc/thought-viber",
   "repository": "https://github.com/minhvu-duc/thought-viber",
-  "keywords": ["skills", "beta", "feature-flags", "sdlc", "vibe-coding", "experimentation"],
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "beta",
+    "feature-flags",
+    "sdlc",
+    "vibe-coding",
+    "experimentation"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "thought-viber",
     "shortDescription": "Throwaway betas that prove demand, durable rebuilds a human owns",
     "category": "Coding",
-    "capabilities": ["Interactive", "Read", "Write"],
-    "defaultPrompt": ["I want to try a new feature idea as a beta.", "What betas are live right now?"]
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "I want to try a new feature idea as a beta.",
+      "What betas are live right now?"
+    ]
   }
 }

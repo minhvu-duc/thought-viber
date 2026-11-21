@@ -125,3 +125,7 @@ The skills don't depend on one agent's tools. Where a step benefits from an agen
 - **Read-only planning** (`harden`): the agent's plan mode if it has one, otherwise plan without editing.
 - **Locked tests** (`harden`): a hook or file-protection rule if the agent supports one.
 - **Agent instructions**: whichever file the agent reads (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`).
+
+## License
+
+[MIT](LICENSE)
