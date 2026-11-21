@@ -205,7 +205,7 @@ beta/<feature>/          # beta code
 
 ## Install
 
-The skills follow the open [Agent Skills](https://agentskills.io) format (`skills/<name>/SKILL.md`), so any agent that reads skills can use them. Install separately for each agent you use.
+Every method below installs straight from this GitHub repo; there's no store or marketplace to sign up for. The skills follow the open [Agent Skills](https://agentskills.io) format (`skills/<name>/SKILL.md`), so any agent that reads skills can use them. Install separately for each agent you use.
 
 ### Claude Code
 
@@ -213,6 +213,8 @@ The skills follow the open [Agent Skills](https://agentskills.io) format (`skill
 /plugin marketplace add minhvu-duc/thought-viber
 /plugin install thought-viber@thought-viber
 ```
+
+The "marketplace" here is this repo itself: `.claude-plugin/marketplace.json` lets Claude Code install it straight from GitHub.
 
 ### Gemini CLI
 
@@ -232,7 +234,7 @@ droid plugin install thought-viber@thought-viber
 
 ### Codex, Cursor, OpenCode, GitHub Copilot and others
 
-The repo ships `.codex-plugin/` and `.cursor-plugin/` manifests for plugin marketplaces. Without a marketplace, copy `skills/*` into the folder your agent reads skills from:
+Copy `skills/*` into the folder your agent reads skills from:
 
 | Agent | Project skills folder |
 |---|---|
@@ -241,6 +243,8 @@ The repo ships `.codex-plugin/` and `.cursor-plugin/` manifests for plugin marke
 | Cursor | `.cursor/skills/` |
 | OpenCode | `.opencode/skills/` |
 | GitHub Copilot | `.github/skills/` |
+
+The `.codex-plugin/` and `.cursor-plugin/` folders are only for listing this repo in the official Codex or Cursor plugin marketplaces later. You don't need them to install.
 
 ### Agent differences
 
