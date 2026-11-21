@@ -13,20 +13,124 @@ The beta is a probe, not a prototype: it is optimized for time-to-signal. If usa
 
 Both tiers use AI. They differ in **ownership and rigor**, not in who types.
 
-## Lifecycle
+## Workflow
 
 ```
-probe ──► vibe ──► gate ──► launch ──► (users try it) ──► verdict
-                                                          │
-                     ┌──────────────┬──────────────┬──────┴──────┐
-                     ▼              ▼              ▼             ▼
-                   keep           kill           pivot        extend
-                     │              │              │          (once)
-                     ▼              ▼              ▼
-                  harden          reap      new probe + reap
+probe ─► vibe ─► gate ─► deploy ─► launch ─► window ─► verdict
+          ▲       │     (flag off)             ▲          │
+          └─FAIL──┘                            └─ extend ─┤
+                                                          ├─ kill  ─► reap
+                                                          ├─ pivot ─► new probe + reap
+                                                          └─ keep  ─► harden
+                                                                        │
+                                                                        ├─► per intent: harden-define ─► harden-deliver
+                                                                        └─► close-out ─► durable
 ```
 
-Probe status: `proposed → building → live → decided → hardening → durable` or `→ reaped`.
+Probe status: `proposed → building → live → decided → hardening → durable`, or `decided → reaped`. Run `status` at any point to see every beta and what to do next.
+
+### 1. `probe` — decide what you're testing
+
+*Status: `proposed` → `building`*
+
+- On first run, creates `.thought-viber/config.yaml` with you: beta folder, public interfaces, safety floor, flag system, telemetry source.
+- Checks there's room under `max_live_betas`, shows any similar lesson in `LEARNINGS.md`, and checks the feature stays off the safety floor. If it can't, it offers a narrower version, or building it as durable code directly with `harden-define` and `harden-deliver`.
+- Pins down, with you: who sees it, the hypothesis, one primary metric and its events, the keep threshold, kill-early criteria, pivot signals, the minimum sample, the window, and the sponsor.
+- Lists any durable prep the beta needs: a facade over logic with no public interface, or an extension point where the feature changes existing behavior.
+
+**You get** `probe.md`. **The sponsor confirms it**, and from then on its thresholds can only change through a recorded amendment.
+
+### 2. `vibe` — build the beta fast
+
+*Status: `building`*
+
+- Lands any durable prep first, each as its own normally reviewed PR.
+- Adds a boundary check to CI if the repo doesn't have one.
+- Builds the smallest version that answers the question, in `beta/<feature>/`, behind flag `beta.<feature>` (default off), with a Beta label, the probe's telemetry events and data in the `beta_<feature>_*` namespace.
+- Writes acceptance tests that use the feature from outside, registers them with the test runner, and proves that flag off hides the feature and every event fires.
+
+**You get** beta code, acceptance tests and `build-notes.md`. Nobody reviews the code; `gate` checks the boundary around it.
+
+### 3. `gate` — check it's safe to release
+
+*Status: `building`*
+
+- Deterministic checks: imports respect the boundary, outside changes are only marked wiring, safety floor and existing schema untouched, no secrets, dependencies audited, flag defaults off, events fire, all tests pass.
+- An independent review in a fresh context: authorization, input handling, data exposure, resource use, failure isolation.
+
+**You get** `gate.md` with PASS or FAIL. On FAIL, fixes go back through `vibe` and `gate` runs again. A human may accept a medium or low finding; any critical or high one is a FAIL.
+
+### 4. Deploy — your normal pipeline
+
+Merge and deploy as usual, with the flag off. The beta is in production, but no user can reach it yet. This isn't a skill.
+
+### 5. `launch` — turn it on for users
+
+*Status: `building` → `live`*
+
+- Checks the gated commit is the one deployed, nothing changed since the gate, and there's still room under the cap.
+- **The sponsor confirms who sees it.** The flag is turned on for that exposure, which is what makes the feature live: instantly with a runtime flag system, or on the next deploy if flags live in code or config.
+- Smoke check: a user inside the exposure sees it, one outside doesn't, and events arrive.
+
+**You get** `live_since` and `expires` set in `probe.md`. The window has started.
+
+### 6. The window — users try it
+
+*Status: `live`*
+
+Usage builds up in your telemetry. Nothing in thought-viber runs during the window, but you can turn the flag off at any time as a kill switch, and run `verdict` early if the kill-early criteria look hit.
+
+### 7. `verdict` — keep, kill, pivot or extend
+
+*Status: `live` → `decided`*
+
+- Pulls the numbers from your telemetry, computes them in code, and compares them to the thresholds locked in `probe.md`.
+- Recommends an outcome; **the sponsor decides**. A beta that expires with no verdict defaults to kill.
+  - **extend:** new expiry, back to the window (at most `max_extensions` times).
+  - **kill:** go to `reap`.
+  - **pivot:** a new `probe` linked to this one, then `reap` this beta.
+  - **keep:** builds the evidence pack (behavior spec, usage map, data shape, feedback), then go to `harden`.
+
+**You get** `verdict.md` with the numbers, the recommendation and the sponsor's decision.
+
+### 8. `harden` — plan the rebuild
+
+*Status: `decided` → `hardening`*
+
+- Starts the hardening clock (`max_hardening_days`).
+- Splits the feature into intents: one user-visible outcome each, only behaviors people used, small enough for one PR. Data and contract come first; the last intent closes out.
+
+**You get** `harden/index.md`; **the product owner approves the split**. Run `harden` again at any point to see which intent and stage is next.
+
+### 9. `harden-define` — define one intent
+
+- Writes `intent.md`: problem, outcome, constraints, the acceptance tests it owns. **The product owner accepts it.**
+- Writes `spec.md`: behaviors, interfaces, data, errors, non-functional needs, with policy concerns flagged. For the data intent, it includes the cutover to a single data store. **The product owner and policy owners resolve every flag.**
+
+### 10. `harden-deliver` — deliver one intent
+
+- **Plan:** `plan.md`, written without editing code. **An engineer approves it.**
+- **Build:** the intent's acceptance tests go into the durable suite first and are locked. Then the implementation, and in the same change, this slice is rerouted from beta to durable and its beta code deleted. The data intent also migrates the data and switches the remaining beta code to the durable store, so users' data lives in one place.
+- **Test:** the plan's "done" commands, the full suite and the boundary check, then an independent verifier.
+- **Review:** a PR checked against `REVIEW.md`. **A code owner approves** and can explain every changed file.
+
+Users keep using the feature throughout: each slice swaps beta code for durable code behind the same flag, and the locked tests keep its behavior the same.
+
+### 11. `harden` close-out — durable
+
+*Status: `hardening` → `durable`*
+
+When every intent has merged, `harden` confirms there's no beta folder, wiring marker or flag left, the beta data was migrated and its tables dropped once the owner confirmed, and every incident from the window has a regression test.
+
+### 12. `reap` — delete a beta that didn't make it
+
+*Status: `decided` → `reaped`*
+
+- Confirms the flag is off. **The sponsor decides what happens to the beta's data:** export it, hand it to a pivot probe, or drop it.
+- Deletes the beta folder, wiring, flag, events, beta-only dependencies and namespaced data. Acceptance tests are kept as records but no longer run. Durable prep stays unless its owner removes it.
+- Build and tests must stay green, then one PR: `reap: <feature>`.
+
+**You get** the lesson recorded in `verdict.md` and one line in `LEARNINGS.md`, so the next `probe` sees it.
 
 ## Skills
 
