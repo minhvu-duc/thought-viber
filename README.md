@@ -16,16 +16,22 @@ Both tiers use AI. They differ in **ownership and rigor**, not in who types.
 ## Workflow
 
 ```
-probe ─► vibe ─► gate ─► deploy ─► launch ─► window ─► verdict
-          ▲       │     (flag off)             ▲          │
-          └─FAIL──┘                            └─ extend ─┤
-                                                          ├─ kill  ─► reap
-                                                          ├─ pivot ─► new probe + reap
-                                                          └─ keep  ─► harden
-                                                                        │
-                                                                        ├─► per intent: harden-define ─► harden-deliver
-                                                                        └─► close-out ─► durable
+probe ─► vibe ─► gate ─► deploy ────────► launch ───────► trial ─► verdict
+          ▲       │      (feature off)    (feature on)      ▲         │
+          └─FAIL──┘                                         └─ extend ┤
+                                                                      ├─ kill  ─► reap
+                                                                      ├─ pivot ─► new probe + reap
+                                                                      └─ keep  ─► harden
+                                                                                    │
+                                                                                    ├─► per intent: harden-define ─► harden-deliver
+                                                                                    └─► close-out ─► durable
 ```
+
+Every beta sits behind a **feature flag**: an on/off switch the app checks before showing the feature.
+
+- **feature off:** the code is deployed to production with its flag off, so no user can see the feature yet.
+- **feature on:** `launch` switches the flag on for the users the probe chose. The trial starts.
+- **extend:** the trial ended before enough users tried the feature to judge it, so it gets more time and `verdict` runs again later.
 
 Probe status: `proposed → building → live → decided → hardening → durable`, or `decided → reaped`. Run `status` at any point to see every beta and what to do next.
 
@@ -35,7 +41,7 @@ Probe status: `proposed → building → live → decided → hardening → dura
 
 - On first run, creates `.thought-viber/config.yaml` with you: beta folder, public interfaces, safety floor, flag system, telemetry source.
 - Checks there's room under `max_live_betas`, shows any similar lesson in `LEARNINGS.md`, and checks the feature stays off the safety floor. If it can't, it offers a narrower version, or building it as durable code directly with `harden-define` and `harden-deliver`.
-- Pins down, with you: who sees it, the hypothesis, one primary metric and its events, the keep threshold, kill-early criteria, pivot signals, the minimum sample, the window, and the sponsor.
+- Pins down, with you: who sees it, the hypothesis, one primary metric and its events, the keep threshold, kill-early criteria, pivot signals, the minimum sample, how many days the trial runs, and the sponsor.
 - Lists any durable prep the beta needs: a facade over logic with no public interface, or an extension point where the feature changes existing behavior.
 
 **You get** `probe.md`. **The sponsor confirms it**, and from then on its thresholds can only change through a recorded amendment.
@@ -47,7 +53,7 @@ Probe status: `proposed → building → live → decided → hardening → dura
 - Lands any durable prep first, each as its own normally reviewed PR.
 - Adds a boundary check to CI if the repo doesn't have one.
 - Builds the smallest version that answers the question, in `beta/<feature>/`, behind flag `beta.<feature>` (default off), with a Beta label, the probe's telemetry events and data in the `beta_<feature>_*` namespace.
-- Writes acceptance tests that use the feature from outside, registers them with the test runner, and proves that flag off hides the feature and every event fires.
+- Writes acceptance tests that use the feature from outside, registers them with the test runner, and proves that switching the flag off hides the feature and that every event fires.
 
 **You get** beta code, acceptance tests and `build-notes.md`. Nobody reviews the code; `gate` checks the boundary around it.
 
@@ -62,7 +68,7 @@ Probe status: `proposed → building → live → decided → hardening → dura
 
 ### 4. Deploy — your normal pipeline
 
-Merge and deploy as usual, with the flag off. The beta is in production, but no user can reach it yet. This isn't a skill.
+Merge and deploy as usual, with the feature's flag off. The beta is in production, but no user can see it yet. This isn't a skill.
 
 ### 5. `launch` — turn it on for users
 
@@ -72,13 +78,13 @@ Merge and deploy as usual, with the flag off. The beta is in production, but no 
 - **The sponsor confirms who sees it.** The flag is turned on for that exposure, which is what makes the feature live: instantly with a runtime flag system, or on the next deploy if flags live in code or config.
 - Smoke check: a user inside the exposure sees it, one outside doesn't, and events arrive.
 
-**You get** `live_since` and `expires` set in `probe.md`. The window has started.
+**You get** `live_since` and `expires` set in `probe.md`. The trial has started.
 
-### 6. The window — users try it
+### 6. The trial — users try it
 
 *Status: `live`*
 
-Usage builds up in your telemetry. Nothing in thought-viber runs during the window, but you can turn the flag off at any time as a kill switch, and run `verdict` early if the kill-early criteria look hit.
+The trial runs from `launch` until its end date (`expires`), for the number of days set in the probe (21 by default). Usage builds up in your telemetry. Nothing in thought-viber runs during the trial, but you can turn the flag off at any time as a kill switch, and run `verdict` early if the kill-early criteria look hit.
 
 ### 7. `verdict` — keep, kill, pivot or extend
 
@@ -86,7 +92,7 @@ Usage builds up in your telemetry. Nothing in thought-viber runs during the wind
 
 - Pulls the numbers from your telemetry, computes them in code, and compares them to the thresholds locked in `probe.md`.
 - Recommends an outcome; **the sponsor decides**. A beta that expires with no verdict defaults to kill.
-  - **extend:** new expiry, back to the window (at most `max_extensions` times).
+  - **extend:** the trial ended before enough users tried the feature (fewer than the probe's minimum sample), so there isn't enough data to judge. The trial gets a new end date, users keep trying it, and `verdict` runs again then. Allowed `max_extensions` times (once by default).
   - **kill:** go to `reap`.
   - **pivot:** a new `probe` linked to this one, then `reap` this beta.
   - **keep:** builds the evidence pack (behavior spec, usage map, data shape, feedback), then go to `harden`.
@@ -120,7 +126,7 @@ Users keep using the feature throughout: each slice swaps beta code for durable 
 
 *Status: `hardening` → `durable`*
 
-When every intent has merged, `harden` confirms there's no beta folder, wiring marker or flag left, the beta data was migrated and its tables dropped once the owner confirmed, and every incident from the window has a regression test.
+When every intent has merged, `harden` confirms there's no beta folder, wiring marker or flag left, the beta data was migrated and its tables dropped once the owner confirmed, and every incident from the trial has a regression test.
 
 ### 12. `reap` — delete a beta that didn't make it
 
@@ -136,7 +142,7 @@ When every intent has merged, `harden` confirms there's no beta folder, wiring m
 
 | Skill | What it does | Human gate |
 |---|---|---|
-| `probe` | Writes the hypothesis, metric, threshold, window and expiry before any code; checks the safety floor and the live-beta cap | Sponsor confirms probe.md |
+| `probe` | Writes the hypothesis, metric, threshold, trial length and end date before any code; checks the safety floor and the live-beta cap | Sponsor confirms probe.md |
 | `vibe` | Builds the beta fast inside the boundary, behind a flag, with telemetry and black-box acceptance tests | — |
 | `gate` | Deterministic boundary/safety checks + independent AI review; pass/fail report | Accepting any medium/low finding |
 | `launch` | Turns the flag on for the probe's exposure, which makes the already-deployed code live for those users; confirms telemetry arrives and starts the clock | Sponsor confirms exposure |

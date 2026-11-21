@@ -5,7 +5,7 @@ description: Turn a gated thought-viber beta's flag on for its probe's exposure 
 
 # launch
 
-`launch` is not a deploy. The beta's code ships through the project's normal deploy with its flag off, so it is in production but no user can reach it. Turning the flag on is what makes the feature live for the probe's exposure, as long as the code is deployed. The beta's window starts at that moment, so `expires` and the verdict are measured from the right day.
+`launch` is not a deploy. The beta's code ships through the project's normal deploy with its flag off, so it is in production but no user can reach it. Turning the flag on is what makes the feature live for the probe's exposure, as long as the code is deployed. The beta's trial starts at that moment, so `expires` and the verdict are measured from the right day.
 
 How the switch takes effect depends on `flag_system` in config:
 
@@ -44,7 +44,7 @@ In probe.md set:
 
 - `status: live`
 - `live_since:` today
-- `expires:` `live_since` + `window_days`
+- `expires:` `live_since` + `trial_days`
 
 Add a line to Amendments only if the exposure differs from what was confirmed: date, actual exposure, reason, approved by.
 

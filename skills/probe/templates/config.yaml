@@ -4,7 +4,7 @@ beta_root: beta                       # beta code lives in <beta_root>/<feature>
 artifacts_root: .thought-viber/features
 
 max_live_betas: 3                     # building + live + hardening at the same time
-default_window_days: 21
+default_trial_days: 21
 max_extensions: 1
 reap_grace_days: 7                    # expired with no verdict -> recommend kill after this
 max_hardening_days: 45                # keep -> durable; past this, status and reap flag it to the sponsor

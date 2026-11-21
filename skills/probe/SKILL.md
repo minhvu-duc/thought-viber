@@ -1,6 +1,6 @@
 ---
 name: probe
-description: Start a thought-viber beta. Use when a dev wants to try a new feature idea fast before building it properly; writes the hypothesis, success metric, threshold, window and expiry, and checks the feature is allowed to be a beta.
+description: Start a thought-viber beta. Use when a dev wants to try a new feature idea fast before building it properly; writes the hypothesis, success metric, threshold, trial length and end date, and checks the feature is allowed to be a beta.
 ---
 
 # probe
@@ -23,7 +23,7 @@ A beta is a probe, not a prototype: it exists to answer one question — does th
    - **Primary metric:** one number, and the telemetry event(s) that produce it.
    - **Keep threshold**, **kill-early criteria**, and **pivot signals** (a usage pattern that suggests a different need).
    - **Minimum sample** for the result to count.
-   - **Window** in days (default from config).
+   - **Trial length** in days: how long users get to try it (default from config).
    - **Sponsor:** the human who owns the decision (not the code).
 
    Steer away from vanity metrics: prefer repeat use, task completion and retention over clicks and views. A "Beta" label attracts curiosity clicks, so by default count a user only after their second meaningful use.

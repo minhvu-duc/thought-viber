@@ -4,8 +4,8 @@ status: proposed        # proposed | building | live | decided | hardening | dur
 sponsor: <name>
 created: YYYY-MM-DD
 live_since:             # set by launch when the flag first turns on
-expires:                # live_since + window_days
-window_days: 21
+expires:                # live_since + trial_days
+trial_days: 21
 extensions: 0
 hardening_since:        # set by harden on start
 hardening_due:          # hardening_since + max_hardening_days
@@ -26,7 +26,7 @@ If we ship <X>, then <Y users> will <Z>.
 ## Metric
 - Primary: <name> = <exact definition>
 - Events: `beta.<slug>.<event>` — <when it fires, properties>
-- Keep threshold: <value over the window>
+- Keep threshold: <value over the trial>
 - Kill early if: <value>
 - Pivot signals: <pattern>
 - Minimum sample: <n users / sessions>

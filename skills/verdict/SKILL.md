@@ -1,6 +1,6 @@
 ---
 name: verdict
-description: Decide whether a thought-viber beta is kept, killed, pivoted or extended by comparing its usage to the probe's pre-set threshold. Use when a beta's window ends, when it expires, or for an early read; on keep, builds the evidence pack harden needs.
+description: Decide whether a thought-viber beta is kept, killed, pivoted or extended by comparing its usage to the probe's pre-set threshold. Use when a beta's trial ends (its expires date), or for an early read; on keep, builds the evidence pack harden needs.
 ---
 
 # verdict
@@ -18,9 +18,9 @@ Pull data from `telemetry.source` in config with whatever tool is connected (ana
 | Outcome | When |
 |---|---|
 | keep | primary metric ≥ threshold and sample ≥ minimum |
-| kill | below threshold at window end, or kill criteria hit early |
+| kill | below threshold at the end of the trial, or kill criteria hit early |
 | pivot | usage clusters on something other than the hypothesis (pivot signals) |
-| extend | sample below minimum at window end and `extensions < max_extensions` |
+| extend | sample below minimum at the end of the trial and `extensions < max_extensions` |
 
 A beta that expired with no verdict defaults to **kill**.
 
@@ -40,6 +40,6 @@ In `<artifacts_root>/<feature>/evidence/`:
 - **`behavior-spec.md`** — every user-visible behavior, each linked to its acceptance test. Review the acceptance tests now: add tests for behaviors users actually rely on that aren't covered (use telemetry to find them), and mark tests for behaviors nobody used as `drop`.
 - **`usage-map.md`** — each behavior or entry point with its share of usage. Anything below the sponsor's cut (default 5%) is a candidate to drop from the rebuild.
 - **`data-shape.md`** — beta tables, keys and namespaced columns on core tables, their schema, row counts, and what must migrate into durable storage.
-- **`feedback.md`** — incidents, bugs, support tickets and user comments from the window.
+- **`feedback.md`** — incidents, bugs, support tickets and user comments from the trial.
 
 The sponsor reviews the pack. It is the input to `harden`; the beta code is only a reference.

@@ -1,6 +1,6 @@
 # Verdict: <feature>
 
-- Window: <live_since> → <expires> (extensions: <n>)
+- Trial: <live_since> → <expires> (extensions: <n>)
 - Hypothesis: <copied from probe.md>
 
 ## Numbers

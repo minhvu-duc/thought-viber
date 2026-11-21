@@ -10,7 +10,7 @@ When a request matches one of these skills, read its `SKILL.md` and follow it. T
 | vibe | A probe is confirmed and the beta needs building | `skills/vibe/SKILL.md` |
 | gate | Beta code is built or changed and must be checked before release | `skills/gate/SKILL.md` |
 | launch | A gated beta is deployed with its flag off and ready to turn on for users | `skills/launch/SKILL.md` |
-| verdict | A beta's window ends, it expires, or an early read is wanted | `skills/verdict/SKILL.md` |
+| verdict | A beta's trial ends, or an early read is wanted | `skills/verdict/SKILL.md` |
 | harden | A beta was kept and must be rebuilt as durable code: split it into intents, track them, close out | `skills/harden/SKILL.md` |
 | harden-define | An intent needs its intent.md or spec.md written and approved | `skills/harden-define/SKILL.md` |
 | harden-deliver | A defined intent needs planning, building, testing or review | `skills/harden-deliver/SKILL.md` |
