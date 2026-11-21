@@ -1,0 +1,13 @@
+{
+  "name": "thought-viber",
+  "owner": { "name": "minhvu-duc" },
+  "metadata": { "description": "thought-viber agent skills", "version": "0.1.0" },
+  "plugins": [
+    {
+      "name": "thought-viber",
+      "source": "./",
+      "description": "Ship features at vibe-coding speed without giving up ownership: probe, vibe, gate, launch, verdict, harden, reap and status skills for throwaway betas and durable rebuilds.",
+      "version": "0.1.0"
+    }
+  ]
+}

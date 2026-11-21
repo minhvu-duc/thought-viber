@@ -1,0 +1,35 @@
+# .thought-viber/config.yaml
+
+beta_root: beta                       # beta code lives in <beta_root>/<feature>/
+artifacts_root: .thought-viber/features
+
+max_live_betas: 3                     # building + live + hardening at the same time
+default_window_days: 21
+max_extensions: 1
+reap_grace_days: 7                    # expired with no verdict -> recommend kill after this
+max_hardening_days: 45                # keep -> durable; past this, status and reap flag it to the sponsor
+
+# Where black-box acceptance tests live. <feature> is replaced per beta.
+# Move it out of the dot-directory if your test runner ignores hidden paths (e.g. Go).
+acceptance_dir: .thought-viber/features/<feature>/evidence/acceptance
+
+flag_prefix: beta.                    # flag name = beta.<feature>
+data_prefix: beta_                    # beta data namespace = beta_<feature>_*
+
+telemetry:
+  event_prefix: beta.                 # events = beta.<feature>.<event>
+  source: ""                          # where verdict reads usage: e.g. posthog, amplitude, sql:<query file>, logs
+
+# Durable modules beta code may import, including facades and extension points added
+# for betas (see vibe → Durable prep). Everything else in durable code is off limits.
+public_interfaces: []                 # e.g. ["src/api/public/**", "packages/sdk/**", "src/checkout/extensions/**"]
+
+# Safety floor: beta code may never change these.
+safety_floor:
+  - auth
+  - payments
+  - permissions
+  - pii
+  - secrets
+  - core schema and migrations
+floor_paths: []                       # e.g. ["src/auth/**", "db/migrations/**", "src/billing/**"]
