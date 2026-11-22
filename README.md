@@ -50,12 +50,8 @@ intent 00: remove the beta  ─►  intent 01: data  ─►  intent 02 ...  ─�
 
 ## Where to start
 
-Ask yourself: would you still build it if nobody used it?
-
-- **No, it's a bet → start with `idea`.** A new screen, a shortcut, an AI helper, anything where usage decides whether it stays. Say "idea: <the feature>" and the flow takes it from there: vibe, watch, verdict. If it's kept, `transition` hands it to the SDLC.
-- **Yes, it has to exist → start with `plan`.** Sign-in, payments, the core schema, a security fix, something a customer or contract requires. Also anything that would be hard to reap, like a change to shared data or an API other teams call. Say "plan: <the feature>" and go plan, design, build, test.
-
-Not sure? Start with `idea`. A bet that turns out to be essential gets kept and moves to the SDLC anyway. Run `watch` at any time to see every beta and feature and what to do next.
+- **You want to vibe code a feature → start with `idea`.** Go through the beta flow (idea, vibe, watch, verdict). If the beta is kept, `transition` takes it into the SDLC.
+- **It's core to the product, like auth → start with `plan`.** Go straight through the SDLC (plan, design, build, test).
 
 ## Beta code
 
