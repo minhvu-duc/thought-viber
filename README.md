@@ -17,7 +17,8 @@ Beta flow    idea ─► vibe ─► watch ─► verdict ─┬─ keep   ─�
                                                └─ kill   ─► reap
 
 SDLC flow    plan ─► design ─► build ─► test
-                     └──── per intent ─────┘
+              ▲                          │
+              └─────── per intent ───────┘
 ```
 
 A kept beta's plan comes from `transition`, and its intents run in this order:
@@ -46,6 +47,11 @@ intent 00: remove the beta  ─►  intent 01: data  ─►  intent 02 ...  ─�
 | `design` | The spec for one intent: behaviors, interfaces, data, errors and acceptance tests. Spec only, no implementation plan. The user approves it. |
 | `build` | Acceptance tests first, then the code. For a kept beta, intent 00 deletes the beta code completely and each later intent turns its kept black-box tests back on. |
 | `test` | Runs everything, checks the work against the spec with fresh eyes, and opens the PR for normal review. On the last intent, confirms the feature is done and, for a kept beta, that every kept black-box test passes. |
+
+## Where to start
+
+- **You want to vibe code a feature → start with `idea`.** Go through the beta flow (idea, vibe, watch, verdict). If the beta is kept, `transition` takes it into the SDLC.
+- **It's core to the product, like auth → start with `plan`.** Go straight through the SDLC (plan, design, build, test).
 
 ## Beta code
 
