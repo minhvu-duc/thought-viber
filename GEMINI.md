@@ -1,19 +1,20 @@
 # thought-viber
 
-Skills for shipping features as throwaway betas first, and as durable, human-owned code only once usage proves them (or directly, when there's no demand to prove).
+Skills for trying features as throwaway betas, watching how much people use them, and either reaping them or rebuilding them as permanent code.
 
 When a request matches one of these skills, read its `SKILL.md` and follow it. Templates a skill mentions are in that skill's `templates/` folder.
 
 | Skill | Use when | File |
 |---|---|---|
-| direct | A feature will be used regardless (auth, core schema, a required integration), so it skips the beta and starts as durable code | `skills/direct/SKILL.md` |
-| probe | Someone wants to try a new feature idea fast, before building it properly | `skills/probe/SKILL.md` |
-| vibe | A probe is confirmed and the beta needs building | `skills/vibe/SKILL.md` |
-| gate | Beta code is built or changed and must be checked before release | `skills/gate/SKILL.md` |
-| launch | A gated beta is deployed with its flag off and ready to turn on for users | `skills/launch/SKILL.md` |
-| verdict | A beta's trial ends, or an early read is wanted | `skills/verdict/SKILL.md` |
-| harden | A beta was kept and must be rebuilt as durable code: split it into intents, track them, close out | `skills/harden/SKILL.md` |
-| harden-define | An intent needs its intent.md or spec.md written and approved | `skills/harden-define/SKILL.md` |
-| harden-deliver | A defined intent needs building, testing or review | `skills/harden-deliver/SKILL.md` |
-| reap | A beta was killed, pivoted away from, or expired | `skills/reap/SKILL.md` |
-| status | Someone asks what betas exist, what's expiring, or what to do next | `skills/status/SKILL.md` |
+| idea | Someone wants to try a feature idea as a beta | `skills/idea/SKILL.md` |
+| vibe | A beta's idea is written and it needs building and shipping | `skills/vibe/SKILL.md` |
+| watch | Someone asks how a beta is being used, or what betas exist and what's next | `skills/watch/SKILL.md` |
+| verdict | A beta's watch window ends, or the numbers already make the call | `skills/verdict/SKILL.md` |
+| reap | A beta was killed or abandoned and needs deleting | `skills/reap/SKILL.md` |
+| transition | A beta was kept and needs a plan to become permanent code | `skills/transition/SKILL.md` |
+| plan | A feature will be built regardless of usage (sign-in, core schema, a requirement) | `skills/plan/SKILL.md` |
+| design | A plan's next piece needs its spec | `skills/design/SKILL.md` |
+| build | A specced piece needs building | `skills/build/SKILL.md` |
+| test | A built piece needs verifying and a PR | `skills/test/SKILL.md` |
+
+Code under `beta/` or marked `thought-viber:beta:<feature>` belongs to a beta and may be removed. Don't build on it: warn the user and suggest a way around it (see `skills/idea/templates/agent-rules.md`).

@@ -1,0 +1,15 @@
+# .thought-viber/config.yaml
+
+beta_root: beta                 # beta code goes in <beta_root>/<feature>/ where it can
+
+flag:
+  prefix: beta.                 # flag name = beta.<feature>
+  how: ""                       # how flags are switched, e.g. "posthog", "flags table", "config/flags.yml, takes effect on deploy"
+
+telemetry:
+  event_prefix: beta.           # events = beta.<feature>.<event>
+  source: ""                    # where watch reads usage, e.g. posthog, amplitude, sql:<query file>, logs
+
+data_prefix: beta_              # beta tables, columns and keys = beta_<feature>_*, where possible
+
+default_watch_days: 21

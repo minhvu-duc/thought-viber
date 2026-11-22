@@ -1,36 +1,20 @@
 ---
 name: reap
-description: Delete thought-viber betas that were killed, pivoted away from, or expired without a verdict, and enforce the live-beta limit. Use on a schedule or after a kill or pivot verdict; removes beta code, wiring, flags and data, and keeps the probe as a recorded lesson.
+description: Delete a thought-viber beta — its folder, every marked line outside it, its flag, events and data — and record what was learned. Use after a kill verdict or whenever a beta is abandoned. Warns about anything that came to depend on the beta before deleting it.
 ---
 
 # reap
 
-The default outcome for any beta is deletion. `reap` makes deletion cheap and routine.
+Everything in `vibe` exists so this step is quick.
 
-## 1. Find candidates
+1. **Flag off.** Confirm `beta.<feature>` is off for everyone, or have the user switch it off.
+2. **Find everything.** The beta folder; every `thought-viber:beta:<feature>` marker in the repo (search, then cross-check Footprint in the beta file); the flag; the event definitions; the data under `beta_<feature>_*` and anything else Footprint lists; dependencies only this beta used.
+3. **Check what depends on it.** Search for `thought-viber:uses-beta:<feature>`, read "Depended on by", and look for imports of the beta folder from outside it. For each one, stop and tell the user what uses it and suggest a fix: rewrite that code so it doesn't need the beta, or promote the piece it needs into permanent code first. Don't delete code something else still uses.
+4. **Data.** List what the beta stored, with row counts. Ask the owner whether to export it, keep it for a new idea, or drop it. Never drop user data without a yes.
+5. **Delete.** The folder, every marked line and block, edits to existing code (restore them using the undo notes in Footprint), the flag, the events, unused dependencies, the beta's tests, and a migration that drops the beta data once the owner has said so.
+6. **Prove it's gone.** No `thought-viber:beta:<feature>` marker left, and the build and full test suite are green.
+7. **One commit or PR:** `reap: <feature>`.
+8. **Record the lesson.** Set `status: reaped`, add what was learned under "Verdict", and append one line to `.thought-viber/LEARNINGS.md`:
+   `YYYY-MM-DD | <feature> | <one-sentence lesson>`
 
-Scan `<artifacts_root>/*/probe.md`:
-
-- `decided` with kill or pivot → reap.
-- `live` and past `expires` with no verdict → run `verdict` first. If there is still no decision after `reap_grace_days`, recommend kill to the sponsor.
-- `hardening` past `hardening_due` → report it to the sponsor. Don't reap it; the decision to keep was made.
-- Report the live count (`building` + `live` + `hardening`) against `max_live_betas`.
-
-## 2. Remove (per feature)
-
-1. Confirm the flag `beta.<feature>` is off.
-2. **Data:** list everything in the `beta_<feature>_*` namespace with row counts: tables, collections, keys, and namespaced columns on core tables (with how many rows hold a value). Ask the sponsor whether to export it, hand it to a pivot probe, or drop it. Never drop user data without explicit confirmation; exports go where the sponsor says.
-3. Delete `<beta_root>/<feature>/`, a migration that drops the namespaced tables and columns (once the sponsor has decided on the data), every `thought-viber:beta:<feature>` wiring line (use `build-notes.md` and a repo-wide search), the flag definition, the telemetry event definitions, and beta-only dependencies nothing else uses.
-4. **Floor touches:** undo every code touch listed in probe.md, using its undo note and the markers, so the floor code is exactly as it was before the beta. Its existing tests must pass. Behavior touches go with the beta folder.
-5. Keep the acceptance tests in `acceptance_dir` as records, but remove their registration from the test runner (the marked line noted in `build-notes.md`). Confirm the normal test command no longer runs them.
-6. Run the boundary check, the build and the full test suite; all must be green. If durable code referenced the removed code, the boundary leaked: stop and report it.
-7. List any durable prep from probe.md (facades, extension points). It is durable code and stays by default; ask its owner whether to keep it for future use or remove it in a separate change.
-8. Prepare one commit or PR titled `reap: <feature>`.
-
-## 3. Record the lesson
-
-- Add a closing section to `verdict.md`: final numbers, what was learned, date.
-- Set probe status to `reaped`.
-- Append one line to `.thought-viber/LEARNINGS.md`: `YYYY-MM-DD | <feature> | <outcome> | <one-sentence lesson>`.
-
-Kept probes are how the team avoids re-testing ideas that already failed: `probe` should check LEARNINGS.md before a new bet.
+   `idea` reads this file, so the team doesn't re-run a bet that already lost.
