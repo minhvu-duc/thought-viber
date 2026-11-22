@@ -7,6 +7,8 @@ description: Start a thought-viber beta. Use when a dev wants to try a new featu
 
 A beta is a probe, not a prototype: it exists to answer one question — does this feature deserve to exist? `probe` writes that question and its pass mark down before any code exists, so the answer can't be bent later.
 
+If no usage result would stop the team building it (auth, the user model, a contractual or compliance requirement), there is no question to answer. Suggest `direct` instead.
+
 ## Steps
 
 1. **Load config.** Read `.thought-viber/config.yaml`. If it's missing, create it from `templates/config.yaml`: detect the stack, propose `beta_root`, `public_interfaces`, `floor_paths`, `flag_system` and the telemetry source, show the default `safety_floor` list, and confirm all of them with the user. The user may add, remove or reword safety floor items. For `flag_system`, explain the trade-off and let the user choose: a runtime flag system switches the feature on and off instantly; flags in code or config only switch on the next deploy.
@@ -15,7 +17,7 @@ A beta is a probe, not a prototype: it exists to answer one question — does th
 
 3. **Check past lessons.** Read `.thought-viber/LEARNINGS.md` if it exists. If a similar bet was already reaped, show the user that line before going further.
 
-4. **Check eligibility (safety floor).** If the feature must change anything in config's `safety_floor` list or under its `floor_paths`, it is not beta-eligible. Say so and offer either a narrower version that stays off the floor, or building it as durable code directly: `harden-define` from a hand-written intent, then `harden-deliver` (there is no beta to delete).
+4. **Check eligibility (safety floor).** If the feature must change anything in config's `safety_floor` list or under its `floor_paths`, it is not beta-eligible. Say so and offer either a narrower version that stays off the floor, or building it as durable code with `direct` (no beta, no trial).
 
 5. **Sharpen the hypothesis with the user.** Ask until each of these is concrete:
    - **Exposure:** which users see it (segment, % rollout).

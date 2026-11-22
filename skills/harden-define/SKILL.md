@@ -1,6 +1,6 @@
 ---
 name: harden-define
-description: Define one thought-viber harden intent — write its intent.md and spec.md and take each through its human approval. Use when harden's index shows an intent at todo, intent or spec, or when someone asks to write the intent or spec for a hardened feature.
+description: Define one thought-viber harden intent — write its intent.md and spec.md and take each through its human approval. Use when harden's index shows an intent at todo, intent or spec, or when someone asks to write the intent or spec for a hardened or direct feature.
 ---
 
 # harden-define
@@ -10,7 +10,7 @@ The product side of one intent: what the user gets (`intent.md`) and exactly how
 **Input:** `harden/index.md` (the intent's row: outcome, acceptance tests owned, dependencies), the evidence pack, and probe.md.
 **Output:** an accepted `intent.md` and a `spec.md` with every flag resolved, in `harden/NN-<slug>/`. The intent's status in `index.md` becomes `plan`.
 
-**Without a beta** (a feature `probe` found not beta-eligible): the user's description replaces the index row and evidence pack, and the spec defines the acceptance tests.
+**Direct feature** (started with `direct`, no beta): the inputs are the intent's row in `index.md` and `brief.md`, in place of the evidence pack and probe.md. The intent owns behaviors from the brief rather than existing acceptance tests, so the spec defines the acceptance tests, one or more per behavior. Constraints and out of scope come from the brief; the intent may narrow them, never widen them. There's no `beta_<feature>_*` data to migrate and no cutover.
 
 Pick up where the intent stands: no `intent.md` → start at 1; `intent.md` accepted → start at 2.
 

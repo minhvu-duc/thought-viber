@@ -13,6 +13,8 @@ The beta is a probe, not a prototype: it is optimized for time-to-signal. If usa
 
 Both tiers use AI. They differ in **ownership and rigor**, not in who types.
 
+Some features have no demand to prove: every user goes through them (auth, accounts, the core schema) or something outside the product requires them (a contract, a regulation). These skip the beta and start as durable code through `direct`.
+
 ## Workflow
 
 ```
@@ -25,6 +27,8 @@ probe ─► vibe ─► gate ─► deploy ────────► launch �
                                                                                     │
                                                                                     ├─► per intent: harden-define ─► harden-deliver
                                                                                     └─► close-out ─► durable
+direct ─────────────────────────────────────────────────────────────────────────► harden
+(no beta: nothing to test)
 ```
 
 Every beta sits behind a **feature flag**: an on/off switch the app checks before showing the feature.
@@ -33,14 +37,29 @@ Every beta sits behind a **feature flag**: an on/off switch the app checks befor
 - **feature on:** `launch` switches the flag on for the users the probe chose. The trial starts.
 - **extend:** the trial ended before enough users tried the feature to judge it, so it gets more time and `verdict` runs again later.
 
-Probe status: `proposed → building → live → decided → hardening → durable`, or `decided → reaped`. Run `status` at any point to see every beta and what to do next.
+Probe status: `proposed → building → live → decided → hardening → durable`, or `decided → reaped`. Direct status: `proposed → hardening → durable`. Run `status` at any point to see every feature and what to do next.
+
+### 0. `direct` — skip the beta when there's nothing to test
+
+*Status: `proposed` → `hardening`*
+
+A beta answers "does this feature deserve to exist?" Use `direct` when the answer is already yes, so a probe and a trial would only confirm what you know.
+
+- Asks one question: *is there a result that would make you not build this?* If the answer is "if users don't use it", that's a demand question, and it sends you to `probe`. Knowing *what* to build isn't the same as knowing *whether* to.
+- Records why there's no beta: **foundation** (every user goes through it, or other features build on it), **obligation** (a contract, regulation or partner requires it), or **safety floor** (it can't be a beta).
+- Pins down the outcome, the behaviors in scope and an explicit **out-of-scope list**. With no usage data to say what to drop, that list is what keeps the build small.
+- Names any interfaces future betas may call. They go into `public_interfaces` as they're built.
+
+**You get** `brief.md`. **The product owner confirms it**, and from then on its scope can only change through a recorded entry. Then `harden` splits it into intents as for a kept beta, with no flag, telemetry, trial, migration or close-out, and no hardening clock. Direct features don't count against `max_live_betas`.
+
+On a new project this usually comes first: betas reach durable code only through declared public interfaces, so the core they attach to (auth, users, the base schema) has to exist before there's anything to vibe on.
 
 ### 1. `probe` — decide what you're testing
 
 *Status: `proposed` → `building`*
 
 - On first run, creates `.thought-viber/config.yaml` with you: beta folder, public interfaces, safety floor, flag system, telemetry source.
-- Checks there's room under `max_live_betas`, shows any similar lesson in `LEARNINGS.md`, and checks the feature stays off the safety floor. If it can't, it offers a narrower version, or building it as durable code directly with `harden-define` and `harden-deliver`.
+- Checks there's room under `max_live_betas`, shows any similar lesson in `LEARNINGS.md`, and checks the feature stays off the safety floor. If it can't, it offers a narrower version, or building it as durable code with `direct`.
 - Pins down, with you: who sees it, the hypothesis, one primary metric and its events, the keep threshold, kill-early criteria, pivot signals, the minimum sample, how many days the trial runs, and the sponsor.
 - Lists any durable prep the beta needs: a facade over logic with no public interface, or an extension point where the feature changes existing behavior.
 
@@ -103,8 +122,8 @@ The trial runs from `launch` until its end date (`expires`), for the number of d
 
 *Status: `decided` → `hardening`*
 
-- Starts the hardening clock (`max_hardening_days`).
-- Splits the feature into intents: one user-visible outcome each, only behaviors people used, small enough for one PR. Data and contract come first; the last intent closes out.
+- For a beta, starts the hardening clock (`max_hardening_days`).
+- Splits the feature into intents: one user-visible outcome each, small enough for one PR. Data and contract come first. For a beta, intents cover only behaviors people used and the last intent closes out; for a direct feature, they cover exactly the behaviors in `brief.md`.
 
 **You get** `harden/index.md`; **the product owner approves the split**. Run `harden` again at any point to see which intent and stage is next.
 
@@ -142,6 +161,7 @@ When every intent has merged, `harden` confirms there's no beta folder, wiring m
 
 | Skill | What it does | Human gate |
 |---|---|---|
+| `direct` | Starts a feature with no demand question as durable code: writes the outcome, behaviors, out-of-scope list and why there's no beta, then hands off to `harden` | Product owner confirms brief.md |
 | `probe` | Writes the hypothesis, metric, threshold, trial length and end date before any code; checks the safety floor and the live-beta cap | Sponsor confirms probe.md |
 | `vibe` | Builds the beta fast inside the boundary, behind a flag, with telemetry and black-box acceptance tests | — |
 | `gate` | Deterministic boundary/safety checks + independent AI review; pass/fail report | Accepting any medium/low finding |
@@ -162,7 +182,7 @@ One person can hold several roles; on a small team one person may hold them all.
 | Role | Who it usually is | What they decide |
 |---|---|---|
 | **Sponsor** | The PM, founder or lead who wants the feature | Owns the bet, not the code: confirms the probe and its thresholds, approves who sees the beta at launch, makes the keep / kill / pivot / extend call, decides what happens to beta data |
-| **Product owner** | Usually the sponsor | What the durable feature does: approves the harden decomposition, each intent and each spec |
+| **Product owner** | Usually the sponsor | What the durable feature does: confirms direct briefs, approves the harden decomposition, each intent and each spec |
 | **Policy owners** | Security, compliance, UX or brand owners | Resolve the concerns a spec flags in their area |
 | **Engineer** | The engineer building the slice | Approves each `plan.md` |
 | **Code owner** | Whoever owns that part of the codebase | Approves each harden PR and can explain every changed file |
@@ -186,7 +206,8 @@ These are what make deletion cheap. `vibe` sets up a mechanical check for the fi
   config.yaml
   LEARNINGS.md
   features/<feature>/
-    probe.md
+    probe.md             # beta
+    brief.md             # direct feature, instead of probe.md
     build-notes.md
     gate.md
     verdict.md

@@ -1,16 +1,19 @@
 ---
 name: harden
-description: Rebuild a proven thought-viber beta as durable, human-owned code. Use after verdict decides keep, to split the feature into small intents, track them, say which intent and stage come next, and close out once every intent has merged. Each intent is defined with harden-define and delivered with harden-deliver.
+description: Build a thought-viber feature as durable, human-owned code — a proven beta after verdict decides keep, or a direct feature after its brief is confirmed. Splits the feature into small intents, tracks them, says which intent and stage come next, and closes out once every intent has merged. Each intent is defined with harden-define and delivered with harden-deliver.
 ---
 
 # harden
 
-The beta proved the feature deserves to exist. Now rebuild it so a human owns it: every decision written down, every file explainable. AI drafts and does the work; humans approve at gates. The agent never approves its own work.
+The feature deserves to exist: a beta proved it, or it's a direct feature that will be used regardless. Now build it so a human owns it: every decision written down, every file explainable. AI drafts and does the work; humans approve at gates. The agent never approves its own work.
 
 The loop follows Anthropic's AI-Native SDLC Playbook: each stage commits an artifact that the next stage reads, and the commit history records who asked for what, what the agent produced, and who approved it.
 
-**Input:** `verdict.md` (decision: keep) and the evidence pack. The beta code is reference material, not a starting point.
-**Output:** durable code, the beta deleted, and an artifact trail per intent.
+**Input:**
+- **Beta:** `verdict.md` (decision: keep) and the evidence pack. The beta code is reference material, not a starting point.
+- **Direct** (from `direct`): `brief.md`, confirmed. There is no beta, evidence pack or flag.
+
+**Output:** durable code, the beta deleted if there was one, and an artifact trail per intent.
 
 Three skills share the work:
 
@@ -31,9 +34,14 @@ Three skills share the work:
 
 If `harden/index.md` already exists, skip to **3. Track**.
 
-Otherwise set probe status to `hardening`, `hardening_since` to today and `hardening_due` to today + `max_hardening_days`.
+Otherwise:
+
+- **Beta:** set probe status to `hardening`, `hardening_since` to today and `hardening_due` to today + `max_hardening_days`.
+- **Direct:** check brief.md has `confirmed` set (if not, send the user back to `direct`), then set its status to `hardening`. There's no hardening clock: the clock exists because beta code waits in the repo until hardening ends, and a direct feature has none.
 
 ## 2. Decompose into intents
+
+### Beta
 
 Read the evidence pack and the beta code, then propose intents:
 
@@ -46,7 +54,19 @@ Read the evidence pack and the beta code, then propose intents:
 
 Write `harden/index.md` from `templates/index.md`. Every acceptance test not marked `drop` belongs to exactly one intent.
 
-**Gate:** the product owner (usually the sponsor) approves the decomposition.
+### Direct
+
+Read brief.md and the codebase, then propose intents by the same rules, with these differences:
+
+- **Only what the brief lists**, in place of "only what was used": every behavior under Behaviors belongs to exactly one intent, and no intent does anything the brief doesn't list. Intents own behaviors, not existing acceptance tests; each intent's spec turns its behaviors into acceptance tests.
+- **Data and contract first**, with no beta data to migrate and no cutover. If the feature changes existing core schema, the data intent's spec covers that change.
+- **No close-out intent:** there is no flag, label or beta folder to remove.
+
+Write `harden/index.md` from `templates/index.md`, leaving out "Dropped from the beta" and the close-out row.
+
+### Approval
+
+**Gate (beta or direct):** the product owner (usually the sponsor) approves the decomposition.
 
 ## 3. Track
 
@@ -60,11 +80,13 @@ Read `index.md` and each intent folder, update every intent's status from its ar
 
 Run intents in dependency order. Intents with no dependency between them and no shared files can run in parallel, each in its own branch (and worktree, if the team uses them). Start with 2–3 in parallel and add more only while reviewers keep up.
 
-If today is past `hardening_due`, say so and name the sponsor.
+For a beta, if today is past `hardening_due`, say so and name the sponsor.
 
 ## 4. Close
 
 When every intent is `done`, confirm:
+
+**Beta:**
 
 - nothing left in `<beta_root>/<feature>/`, no `thought-viber:beta:<feature>` markers (including the acceptance-test registration), no `beta.<feature>` flag;
 - beta data migrated, nothing has written to the `beta_<feature>_*` tables and columns since the cutover, and they are dropped only after the owner confirms the migration;
@@ -72,3 +94,11 @@ When every intent is `done`, confirm:
 - probe status set to `durable`.
 
 Report: intents merged, what was dropped from the beta and why, and who owns each part.
+
+**Direct:**
+
+- every behavior in brief.md has a locked acceptance test in the durable suite;
+- every path under "Interfaces for betas" is in config's `public_interfaces`;
+- brief status set to `durable`.
+
+Report: intents merged, any changes recorded after confirmation, and who owns each part.

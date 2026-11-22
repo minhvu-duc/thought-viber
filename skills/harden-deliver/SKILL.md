@@ -1,11 +1,13 @@
 ---
 name: harden-deliver
-description: Deliver one defined thought-viber harden intent — plan it, build it against locked acceptance tests, verify it, delete the beta slice it replaces, and take it through code review. Use when harden's index shows an intent at plan, build, test or review, or when someone asks to plan, build or review a hardened intent.
+description: Deliver one defined thought-viber harden intent — plan it, build it against locked acceptance tests, verify it, delete the beta slice it replaces (if any), and take it through code review. Use when harden's index shows an intent at plan, build, test or review, or when someone asks to plan, build or review a hardened or direct intent.
 ---
 
 # harden-deliver
 
 The engineering side of one intent: turn an approved spec into reviewed, merged durable code, and delete the beta code it replaces in the same change. The agent never approves its own work.
+
+**Direct feature** (started with `direct`): there is no beta, so skip everything about rerouting, deleting beta code and migrating beta data. The rest is unchanged.
 
 **Input:** the intent's accepted `intent.md` and `spec.md` (every flag resolved). If either is missing or unapproved, stop and send the user to `harden-define`.
 **Output:** a merged PR, the beta slice deleted, and the intent marked `done` in `index.md`.
@@ -20,10 +22,11 @@ Plan without editing anything (use the agent's plan or read-only mode if it has 
 
 ## 2. Build
 
-- **First commit:** bring this intent's acceptance tests from `acceptance_dir` into the durable test suite (without a beta: write the tests `spec.md` defines), pointed at the durable implementation. They should fail.
+- **First commit:** bring this intent's acceptance tests from `acceptance_dir` into the durable test suite (direct feature: write the tests `spec.md` defines, straight into the durable suite), pointed at the durable implementation. They should fail.
 - **These tests are locked.** The agent may not edit, skip or delete them; if the agent supports hooks or file-protection rules, recommend one that blocks edits to them. If a test is genuinely wrong, stop and ask the product owner, and record the change in `spec.md`.
 - Implement per `plan.md`, following the project's agent instruction file (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md` or equivalent). When the agent makes the same mistake twice, add a line to it.
 - Bug found? Failing test first, commit, then fix.
+- If this intent builds an interface listed under "Interfaces for betas" in a direct feature's `brief.md`, add its path to config's `public_interfaces` in the same change.
 - **Same change set:** reroute this slice from beta to durable and delete the beta code it replaces, including its marked wiring lines. Beta and durable code coexist only between slices, never for the same behavior.
 - **Data intent:** in the same change set, migrate the beta data and switch the beta code still running to the durable interface, per the Cutover section of `spec.md`. Prove it: the acceptance tests of slices not yet hardened still pass against the migrated data, and nothing writes to `beta_<feature>_*` after the cutover.
 

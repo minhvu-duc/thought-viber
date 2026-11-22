@@ -1,11 +1,12 @@
 # thought-viber
 
-Skills for shipping features as throwaway betas first, and as durable, human-owned code only once usage proves them.
+Skills for shipping features as throwaway betas first, and as durable, human-owned code only once usage proves them (or directly, when there's no demand to prove).
 
 When a request matches one of these skills, read its `SKILL.md` and follow it. Templates a skill mentions are in that skill's `templates/` folder.
 
 | Skill | Use when | File |
 |---|---|---|
+| direct | A feature will be used regardless (auth, core schema, a required integration), so it skips the beta and starts as durable code | `skills/direct/SKILL.md` |
 | probe | Someone wants to try a new feature idea fast, before building it properly | `skills/probe/SKILL.md` |
 | vibe | A probe is confirmed and the beta needs building | `skills/vibe/SKILL.md` |
 | gate | Beta code is built or changed and must be checked before release | `skills/gate/SKILL.md` |
