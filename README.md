@@ -46,9 +46,9 @@ Probe status: `proposed → building → live → decided → hardening → dura
 A beta answers "does this feature deserve to exist?" Use `direct` when the answer is already yes, so a probe and a trial would only confirm what you know.
 
 - Asks one question: *is there a result that would make you not build this?* If the answer is "if users don't use it", that's a demand question, and it sends you to `probe`. Knowing *what* to build isn't the same as knowing *whether* to.
-- Records why there's no beta: **foundation** (every user goes through it, or other features build on it), **obligation** (a contract, regulation or partner requires it), or **safety floor** (it can't be a beta).
+- Records why there's no beta: **foundation** (every user goes through it, or other features build on it), or **obligation** (a contract, regulation or partner requires it). Touching the safety floor isn't a reason on its own: a beta can touch the floor once you're warned and accept it.
 - Pins down the outcome, the behaviors in scope and an explicit **out-of-scope list**. With no usage data to say what to drop, that list is what keeps the build small.
-- Names any interfaces future betas may call, and the code paths of any safety-floor work. As each is built, its path goes into `public_interfaces` or `floor_paths`, so gate knows what betas may use and what they may never touch.
+- Names any interfaces future betas may call, and the code paths of any safety-floor work. As each is built, its path goes into `public_interfaces` or `floor_paths`, so gate knows what betas may use and which changes need an accepted floor touch.
 - Prepares the boundary on first use: agrees how durable code marks its public interfaces (`public_interface_convention`, e.g. `src/<module>/public/**`), and adds the boundary check to CI before any beta exists.
 
 **You get** `brief.md`. **The product owner confirms it**, and from then on its scope can only change through a recorded entry. Then `harden` splits it into intents as for a kept beta, with no flag, telemetry, trial, migration or close-out, and no hardening clock. Direct features don't count against `max_live_betas`.
@@ -60,7 +60,7 @@ On a new project this usually comes first: betas reach durable code only through
 *Status: `proposed` → `building`*
 
 - On first run, creates `.thought-viber/config.yaml` with you: beta folder, public interfaces, safety floor, flag system, telemetry source.
-- Checks there's room under `max_live_betas`, shows any similar lesson in `LEARNINGS.md`, and checks the feature stays off the safety floor. If it can't, it offers a narrower version, or building it as durable code with `direct`.
+- Checks there's room under `max_live_betas`, shows any similar lesson in `LEARNINGS.md`, and finds where the beta would touch the safety floor: by changing floor code, or by deciding something in a floor area (access to others' data, personal data) from inside the beta folder. It warns you about each one and offers a narrower version where that avoids a touch. Nothing is blocked: every touch is recorded in `probe.md`, and the sponsor accepts each change to floor code with a note on how to undo it.
 - Pins down, with you: who sees it, the hypothesis, one primary metric and its events, the keep threshold, kill-early criteria, pivot signals, the minimum sample, how many days the trial runs, and the sponsor.
 - Lists any durable prep the beta needs: a facade over logic with no public interface, or an extension point where the feature changes existing behavior.
 
@@ -81,7 +81,7 @@ On a new project this usually comes first: betas reach durable code only through
 
 *Status: `building`*
 
-- Deterministic checks: imports respect the boundary, outside changes are only marked wiring, safety floor and existing schema untouched, no secrets, dependencies audited, flag defaults off, events fire, all tests pass.
+- Deterministic checks: imports respect the boundary, outside changes are only marked wiring or accepted floor touches, existing schema untouched, no secrets, dependencies audited, flag defaults off, events fire, all tests pass.
 - An independent review in a fresh context: authorization, input handling, data exposure, resource use, failure isolation.
 
 **You get** `gate.md` with PASS or FAIL. On FAIL, fixes go back through `vibe` and `gate` runs again. A human may accept a medium or low finding; any critical or high one is a FAIL.
@@ -135,9 +135,8 @@ The trial runs from `launch` until its end date (`expires`), for the number of d
 
 ### 10. `harden-deliver` — deliver one intent
 
-- **Plan:** `plan.md`, written without editing code. **An engineer approves it.**
 - **Build:** the intent's acceptance tests go into the durable suite first and are locked. Then the implementation, and in the same change, this slice is rerouted from beta to durable and its beta code deleted. The data intent also migrates the data and switches the remaining beta code to the durable store, so users' data lives in one place.
-- **Test:** the plan's "done" commands, the full suite and the boundary check, then an independent verifier.
+- **Test:** the locked acceptance tests, the full suite and the boundary check, then an independent verifier.
 - **Review:** a PR checked against `REVIEW.md`. **A code owner approves** and can explain every changed file.
 
 Users keep using the feature throughout: each slice swaps beta code for durable code behind the same flag, and the locked tests keep its behavior the same.
@@ -153,7 +152,7 @@ When every intent has merged, `harden` confirms there's no beta folder, wiring m
 *Status: `decided` → `reaped`*
 
 - Confirms the flag is off. **The sponsor decides what happens to the beta's data:** export it, hand it to a pivot probe, or drop it.
-- Deletes the beta folder, wiring, flag, events, beta-only dependencies and namespaced data. Acceptance tests are kept as records but no longer run. Durable prep stays unless its owner removes it.
+- Undoes every accepted floor touch, so floor code is exactly as it was, and deletes the beta folder, wiring, flag, events, beta-only dependencies and namespaced data. Acceptance tests are kept as records but no longer run. Durable prep stays unless its owner removes it.
 - Build and tests must stay green, then one PR: `reap: <feature>`.
 
 **You get** the lesson recorded in `verdict.md` and one line in `LEARNINGS.md`, so the next `probe` sees it.
@@ -163,15 +162,15 @@ When every intent has merged, `harden` confirms there's no beta folder, wiring m
 | Skill | What it does | Human gate |
 |---|---|---|
 | `direct` | Starts a feature with no demand question as durable code: writes the outcome, behaviors, out-of-scope list and why there's no beta, then hands off to `harden` | Product owner confirms brief.md |
-| `probe` | Writes the hypothesis, metric, threshold, trial length and end date before any code; checks the safety floor and the live-beta cap | Sponsor confirms probe.md |
+| `probe` | Writes the hypothesis, metric, threshold, trial length and end date before any code; warns about safety-floor touches; checks the live-beta cap | Sponsor confirms probe.md and accepts each floor-code touch |
 | `vibe` | Builds the beta fast inside the boundary, behind a flag, with telemetry and black-box acceptance tests | — |
 | `gate` | Deterministic boundary/safety checks + independent AI review; pass/fail report | Accepting any medium/low finding |
 | `launch` | Turns the flag on for the probe's exposure, which makes the already-deployed code live for those users; confirms telemetry arrives and starts the clock | Sponsor confirms exposure |
 | `verdict` | Compares usage to the pre-set threshold; recommends keep / kill / pivot / extend; on keep builds the evidence pack | Sponsor decides |
 | `harden` | Splits the kept feature into small intents, tracks them, says which intent and stage is next, and closes out when all have merged | Product owner approves the decomposition |
 | `harden-define` | For one intent: writes `intent.md`, then `spec.md` with policy concerns flagged | Product owner; policy owners resolve flags |
-| `harden-deliver` | For one intent: writes `plan.md`, builds against locked acceptance tests, deletes the beta slice it replaces, verifies, opens the PR | Engineer approves the plan; code owner approves the PR |
-| `reap` | Deletes killed/expired betas (code, wiring, flag, data) and records the lesson | Sponsor confirms data handling |
+| `harden-deliver` | For one intent: builds from the spec against locked acceptance tests, deletes the beta slice it replaces, verifies, opens the PR | Code owner approves the PR |
+| `reap` | Deletes killed/expired betas (code, wiring, floor touches, flag, data) and records the lesson | Sponsor confirms data handling |
 | `status` | Read-only overview: every beta's status, clock, gate result and next step | — |
 
 `harden`, `harden-define` and `harden-deliver` follow the loop from Anthropic's [AI-Native SDLC Playbook](https://claude.com/resources/articles/the-ai-native-sdlc-playbook): each stage commits an artifact the next stage reads, and the agent never approves its own work.
@@ -185,7 +184,6 @@ One person can hold several roles; on a small team one person may hold them all.
 | **Sponsor** | The PM, founder or lead who wants the feature | Owns the bet, not the code: confirms the probe and its thresholds, approves who sees the beta at launch, makes the keep / kill / pivot / extend call, decides what happens to beta data |
 | **Product owner** | Usually the sponsor | What the durable feature does: confirms direct briefs, approves the harden decomposition, each intent and each spec |
 | **Policy owners** | Security, compliance, UX or brand owners | Resolve the concerns a spec flags in their area |
-| **Engineer** | The engineer building the slice | Approves each `plan.md` |
 | **Code owner** | Whoever owns that part of the codebase | Approves each harden PR and can explain every changed file |
 
 ## Boundary rules
@@ -197,7 +195,7 @@ These are what make deletion cheap. `vibe` sets up a mechanical check for the fi
 3. Beta code lives in `beta/<feature>/`; wiring outside it is minimal and marked `thought-viber:beta:<feature>`.
 4. Beta data lives in its own namespace: `beta_<feature>_*` tables, collections or keys. If it must sit on existing core data, it goes in new namespaced columns (`beta_<feature>_*`); existing columns are never changed. If neither works, stop and discuss with the team.
 5. Everything is behind flag `beta.<feature>`, default off. The code ships through a normal deploy with the flag off; turning the flag on (`launch`) is what makes the feature live, and turning it off is the kill switch that hides it from every user. With a runtime flag system (a flag service or flags table) both switches are instant; with flags in code or config, each one takes effect on the next deploy. Each project chooses (`flag_system` in config). The code stays until `reap` deletes it (or `harden` replaces it).
-6. Betas never touch the safety floor. The defaults are auth, payments, permissions, PII handling, secrets and existing core schema; each project adjusts the list in `config.yaml` (`safety_floor`, plus `floor_paths` for the code that implements it).
+6. Touching the safety floor needs a warning and a record. The defaults are auth, payments, permissions, PII handling, secrets and existing core schema; each project adjusts the list in `config.yaml` (`safety_floor`, plus `floor_paths` for the code that implements it). Keep as much as possible in the beta folder. Every touch is warned about and listed in `probe.md`; a change to floor code also needs the sponsor's acceptance, a marker and an undo note, so `reap` can restore it exactly and `harden` can replace it. Gate fails any floor change that isn't listed and accepted.
 7. At most `max_live_betas` building, live or hardening at once; every beta has an expiry, and the default outcome is deletion.
 
 ## Layout in your project
@@ -221,7 +219,7 @@ These are what make deletion cheap. `vibe` sets up a mechanical check for the fi
       feedback.md
     harden/
       index.md
-      01-<slug>/intent.md spec.md plan.md
+      01-<slug>/intent.md spec.md
 beta/<feature>/          # beta code
 ```
 
@@ -273,7 +271,6 @@ The `.codex-plugin/` and `.cursor-plugin/` folders are only for listing this rep
 The skills don't depend on one agent's tools. Where a step benefits from an agent feature, it says what to do without it:
 
 - **Fresh-context review** (`gate`, `harden-deliver`): a subagent if the agent has them, otherwise a new session given only the listed inputs.
-- **Read-only planning** (`harden-deliver`): the agent's plan mode if it has one, otherwise plan without editing.
 - **Locked tests** (`harden-deliver`): a hook or file-protection rule if the agent supports one.
 - **Agent instructions**: whichever file the agent reads (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`).
 

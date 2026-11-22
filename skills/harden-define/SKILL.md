@@ -5,10 +5,10 @@ description: Define one thought-viber harden intent — write its intent.md and 
 
 # harden-define
 
-The product side of one intent: what the user gets (`intent.md`) and exactly how it behaves (`spec.md`). Both are approved by humans before any plan or code. The agent never approves its own work.
+The product side of one intent: what the user gets (`intent.md`) and exactly how it behaves (`spec.md`). Both are approved by humans before any code. The agent never approves its own work.
 
 **Input:** `harden/index.md` (the intent's row: outcome, acceptance tests owned, dependencies), the evidence pack, and probe.md.
-**Output:** an accepted `intent.md` and a `spec.md` with every flag resolved, in `harden/NN-<slug>/`. The intent's status in `index.md` becomes `plan`.
+**Output:** an accepted `intent.md` and a `spec.md` with every flag resolved, in `harden/NN-<slug>/`. The intent's status in `index.md` becomes `build`.
 
 **Direct feature** (started with `direct`, no beta): the inputs are the intent's row in `index.md` and `brief.md`, in place of the evidence pack and probe.md. The intent owns behaviors from the brief rather than existing acceptance tests, so the spec defines the acceptance tests, one or more per behavior. Constraints and out of scope come from the brief; the intent may narrow them, never widen them. There's no `beta_<feature>_*` data to migrate and no cutover.
 
@@ -26,10 +26,10 @@ From the accepted intent, in one session, draft from `templates/spec.md`: behavi
 
 Apply the org's policy skills present in the repo (security, compliance, UX, brand). List every concern under Flags with the owner who must resolve it.
 
-**Gate:** the product owner and each named policy owner resolve every flag. Record resolutions in the Flags table, commit it, and set the intent's status to `plan`. Hand off to `harden-deliver`.
+**Gate:** the product owner and each named policy owner resolve every flag. Record resolutions in the Flags table, commit it, and set the intent's status to `build`. Hand off to `harden-deliver`.
 
 ## Rules
 
 - Don't start the spec until the intent is accepted, and don't hand off until every flag is resolved.
-- If the spec shows the intent is too big for one plan and one PR, stop and go back to `harden` to split it.
+- If the spec shows the intent is too big for one spec and one PR, stop and go back to `harden` to split it.
 - Changing a locked acceptance test needs the product owner's approval, recorded under "Changes to locked acceptance tests" in `spec.md`.

@@ -21,10 +21,11 @@ Scan `<artifacts_root>/*/probe.md`:
 1. Confirm the flag `beta.<feature>` is off.
 2. **Data:** list everything in the `beta_<feature>_*` namespace with row counts: tables, collections, keys, and namespaced columns on core tables (with how many rows hold a value). Ask the sponsor whether to export it, hand it to a pivot probe, or drop it. Never drop user data without explicit confirmation; exports go where the sponsor says.
 3. Delete `<beta_root>/<feature>/`, a migration that drops the namespaced tables and columns (once the sponsor has decided on the data), every `thought-viber:beta:<feature>` wiring line (use `build-notes.md` and a repo-wide search), the flag definition, the telemetry event definitions, and beta-only dependencies nothing else uses.
-4. Keep the acceptance tests in `acceptance_dir` as records, but remove their registration from the test runner (the marked line noted in `build-notes.md`). Confirm the normal test command no longer runs them.
-5. Run the boundary check, the build and the full test suite; all must be green. If durable code referenced the removed code, the boundary leaked: stop and report it.
-6. List any durable prep from probe.md (facades, extension points). It is durable code and stays by default; ask its owner whether to keep it for future use or remove it in a separate change.
-7. Prepare one commit or PR titled `reap: <feature>`.
+4. **Floor touches:** undo every code touch listed in probe.md, using its undo note and the markers, so the floor code is exactly as it was before the beta. Its existing tests must pass. Behavior touches go with the beta folder.
+5. Keep the acceptance tests in `acceptance_dir` as records, but remove their registration from the test runner (the marked line noted in `build-notes.md`). Confirm the normal test command no longer runs them.
+6. Run the boundary check, the build and the full test suite; all must be green. If durable code referenced the removed code, the boundary leaked: stop and report it.
+7. List any durable prep from probe.md (facades, extension points). It is durable code and stays by default; ask its owner whether to keep it for future use or remove it in a separate change.
+8. Prepare one commit or PR titled `reap: <feature>`.
 
 ## 3. Record the lesson
 

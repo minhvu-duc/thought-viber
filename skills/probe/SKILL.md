@@ -17,7 +17,11 @@ If no usage result would stop the team building it (auth, the user model, a cont
 
 3. **Check past lessons.** Read `.thought-viber/LEARNINGS.md` if it exists. If a similar bet was already reaped, show the user that line before going further.
 
-4. **Check eligibility (safety floor).** If the feature must change anything in config's `safety_floor` list or under its `floor_paths`, it is not beta-eligible. Say so and offer either a narrower version that stays off the floor, or building it as durable code with `direct` (no beta, no trial).
+4. **Check the safety floor.** Work out where the beta would touch config's `safety_floor`. There are two kinds of touch:
+   - **code:** the beta must change durable code under `floor_paths`, or durable code that implements a floor item, because the feature can't be built in `<beta_root>/<feature>/` alone;
+   - **behavior:** the code stays in the beta folder, but it makes a decision in a floor area: who may see or change whose data, handling personal data such as email addresses, anything involving money or secrets.
+
+   A floor touch doesn't block the beta. Warn the user about each one: what it touches, why the beta needs it, and what could go wrong. Keep as much as possible in the beta folder, and offer a narrower version where one avoids a touch. Record every touch under Floor touches in probe.md. A **code** touch also needs the sponsor's acceptance and a note on how to undo it, because `reap` must restore the floor code exactly if the beta is killed.
 
 5. **Sharpen the hypothesis with the user.** Ask until each of these is concrete:
    - **Exposure:** which users see it (segment, % rollout).

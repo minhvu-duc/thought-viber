@@ -11,7 +11,7 @@ Best effort, with a hard floor. Gate reports; it never fixes. Fixes go back thro
 
 - Boundary check passes: no durable → beta imports; beta imports only `public_interfaces`.
 - Changes outside `<beta_root>/<feature>/` are only wiring lines marked `thought-viber:beta:<feature>`. Durable prep listed in probe.md is not part of the beta diff: it must already be merged through its own reviewed change.
-- Nothing in config's `safety_floor` list is changed, and nothing under `floor_paths`.
+- Every change under `floor_paths`, or to durable code that implements a `safety_floor` item, is a code touch listed and accepted under Floor touches in probe.md, marked `thought-viber:beta:<feature>`, with an undo note in build-notes.md. Any other floor change is FAIL.
 - Schema changes only add `beta_<feature>_*` tables, collections, keys, or new nullable `beta_<feature>_*` columns on existing tables, in migrations marked `thought-viber:beta:<feature>`. No existing column is altered, renamed or dropped.
 - No secrets in the diff (gitleaks or trufflehog if available, otherwise a pattern scan).
 - New dependencies are listed and audited with the ecosystem's tool (npm audit, pip-audit, etc.); any high or critical = FAIL.
@@ -28,6 +28,7 @@ Run the review in a fresh context that has not seen the build: a subagent if you
 - **Data exposure:** the beta reads and returns only what the feature needs; no cross-user or cross-tenant leakage.
 - **Resource safety:** no unbounded queries or loops, pagination and timeouts present, nothing that can load durable systems heavily.
 - **Failure isolation:** if the beta throws, the rest of the app keeps working.
+- **Floor touches:** each touch listed in probe.md, code or behavior, gets a focused look: who can reach what data through it, and what happens if it's wrong. Severity is judged as for any finding; an accepted touch is not an accepted finding.
 
 Any critical or high finding = FAIL.
 

@@ -44,8 +44,14 @@ If we ship <X>, then <Y users> will <Z>.
 ## Data
 <what the beta stores: new `beta_<slug>_*` tables/collections/keys, or new `beta_<slug>_*` columns on existing core tables (which ones). Whether it must survive a rebuild.>
 
-## Safety floor check
-<checked against config `safety_floor` and `floor_paths`: how the feature stays off the floor, or what was cut to make it so>
+## Floor touches
+<!-- Where the beta touches config `safety_floor`, or "none".
+     code: a change to durable code under `floor_paths` or that implements a floor item. Needs the sponsor's acceptance
+           and a way to undo it; reap undoes it, harden replaces it.
+     behavior: code stays in the beta folder but decides something in a floor area (access to others' data, personal data,
+           money, secrets). Recorded as a warning. -->
+| # | Kind | Floor item | Where | What it does and why the beta needs it | How to undo (code only) | Accepted by, date (code only) |
+|---|---|---|---|---|---|---|
 
 ## Amendments
 <!-- YYYY-MM-DD — change — reason — approved by. Never edit thresholds above after confirmation. -->

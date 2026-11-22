@@ -14,6 +14,6 @@ When a request matches one of these skills, read its `SKILL.md` and follow it. T
 | verdict | A beta's trial ends, or an early read is wanted | `skills/verdict/SKILL.md` |
 | harden | A beta was kept and must be rebuilt as durable code: split it into intents, track them, close out | `skills/harden/SKILL.md` |
 | harden-define | An intent needs its intent.md or spec.md written and approved | `skills/harden-define/SKILL.md` |
-| harden-deliver | A defined intent needs planning, building, testing or review | `skills/harden-deliver/SKILL.md` |
+| harden-deliver | A defined intent needs building, testing or review | `skills/harden-deliver/SKILL.md` |
 | reap | A beta was killed, pivoted away from, or expired | `skills/reap/SKILL.md` |
 | status | Someone asks what betas exist, what's expiring, or what to do next | `skills/status/SKILL.md` |

@@ -16,7 +16,7 @@
 | 02 | | | | 01 | | todo |
 | NN | close-out | Flag, label and beta folder removed (beta only) | — | all | | todo |
 
-Status: todo → intent → spec → plan → build → test → review → done
+Status: todo → intent → spec → build → test → review → done
 
 ## Parallel groups
 <intents with no dependency and no shared files, e.g. [02, 03] after 01>

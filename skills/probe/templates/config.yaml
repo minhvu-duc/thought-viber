@@ -33,7 +33,8 @@ public_interface_convention: ""       # e.g. "src/<module>/public/**", "packages
 # Each entry follows public_interface_convention.
 public_interfaces: []                 # e.g. ["src/api/public/**", "packages/sdk/**", "src/checkout/extensions/**"]
 
-# Safety floor: beta code may never change these. The list below is the default;
+# Safety floor: areas where a mistake hurts users. A beta that touches one warns the user and
+# records the touch in probe.md (code touches need the sponsor's acceptance). The list below is the default;
 # add, remove or reword items to fit your project.
 safety_floor:
   - auth
@@ -42,6 +43,7 @@ safety_floor:
   - pii handling
   - secrets
   - existing core schema          # new namespaced beta_<feature>_* columns are allowed
-# Code paths that implement the safety floor. Beta changes here fail the gate.
+# Code paths that implement the safety floor. A beta change here must be an accepted floor touch
+# in probe.md, or gate fails it; reap undoes it.
 # A direct feature that builds floor code adds its paths here in the same change.
 floor_paths: []                       # e.g. ["src/auth/**", "src/billing/**", "src/permissions/**"]

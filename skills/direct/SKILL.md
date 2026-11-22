@@ -1,6 +1,6 @@
 ---
 name: direct
-description: Start a thought-viber feature as durable code with no beta. Use when the feature will be used whether or not anyone tests demand first — foundations like auth, users or the core schema, obligations like a contract or compliance requirement, or safety-floor work — so a probe and trial would only confirm what is already known. Writes brief.md and hands off to harden.
+description: Start a thought-viber feature as durable code with no beta. Use when the feature will be used whether or not anyone tests demand first — foundations like auth, users or the core schema, or obligations like a contract or compliance requirement — so a probe and trial would only confirm what is already known. Writes brief.md and hands off to harden.
 ---
 
 # direct
@@ -24,10 +24,9 @@ What the direct path loses is usage data, the evidence that tells `harden` what 
 
    Then name the reason it's direct:
    - **foundation:** every user goes through it, or other features build on it (auth, users, accounts, the core schema, the first public interfaces);
-   - **obligation:** a contract, a regulation or a partner requires it;
-   - **safety floor:** it must change something on config's `safety_floor` list or under its `floor_paths`, so it can't be a beta.
+   - **obligation:** a contract, a regulation or a partner requires it.
 
-   For a safety-floor feature that also has a demand question, say so: the honest options are a narrower beta that stays off the floor (`probe`), or accepting the bet without evidence. Let the product owner choose.
+   Touching the safety floor isn't a reason on its own: a beta may touch the floor once the user is warned and the touch is recorded (see `probe`). A floor feature with a demand question is a probe.
 
 4. **Check past lessons.** Read `.thought-viber/LEARNINGS.md` if it exists. If a similar feature was reaped as a beta, show that line: it may mean the feature isn't as certain as it looks.
 
@@ -50,4 +49,4 @@ What the direct path loses is usage data, the evidence that tells `harden` what 
 - A direct feature doesn't count against `max_live_betas`; there's no beta code in the repo.
 - After confirmation, changes to Behaviors or Out of scope go in the "Changes after confirmation" section with date, reason and approver, never as silent edits. A behavior that grows a demand question during the build ("should we also…?") becomes its own `probe`, not a new line in the brief.
 - One brief per feature. If it's really two features, write two briefs.
-- The intent that builds an interface for betas adds its path to config's `public_interfaces`, and the intent that builds safety-floor code adds its paths to `floor_paths`, each in the same change. Until then a beta could reach code gate doesn't know to protect.
+- The intent that builds an interface for betas adds its path to config's `public_interfaces`, and the intent that builds safety-floor code adds its paths to `floor_paths`, each in the same change. Until then a beta could change floor code without gate asking for an accepted floor touch.

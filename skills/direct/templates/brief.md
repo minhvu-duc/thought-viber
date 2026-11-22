@@ -13,7 +13,7 @@ confirmed:              # set when the owner confirms this brief
 <what is true for users when this is done>
 
 ## Why no beta
-- Reason: <foundation | obligation | safety floor>
+- Reason: <foundation | obligation>
 - <one or two sentences: who depends on it, or what requires it>
 
 ## What would stop us

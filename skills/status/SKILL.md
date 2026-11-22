@@ -35,7 +35,7 @@ Flag each of these, most urgent first:
 - `decided` kill or pivot not yet reaped → `reap`.
 - `decided` keep not yet hardening → `harden`.
 - `hardening` beta past `hardening_due` → tell the sponsor; the beta code is still in the repo.
-- `hardening` otherwise (beta or direct) → the next intent from `index.md` and its skill: `harden-define` (todo, intent, spec) or `harden-deliver` (plan, build, test, review).
+- `hardening` otherwise (beta or direct) → the next intent from `index.md` and its skill: `harden-define` (todo, intent, spec) or `harden-deliver` (build, test, review).
 - direct `proposed` with `confirmed` set but no `harden/index.md` → `harden`.
 - direct `proposed` not yet confirmed by the owner.
 - `building` with a gate FAIL, or a stale gate → `vibe` fixes, then `gate`.

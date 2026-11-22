@@ -21,12 +21,12 @@ Three skills share the work:
 |---|---|---|---|
 | `harden` | Decompose, track, close | `index.md` | Product owner |
 | `harden-define` | Intent, spec | `intent.md`, `spec.md` | Product owner, policy owners |
-| `harden-deliver` | Plan, build, test, review | `plan.md`, code, PR | Engineer, code owner |
+| `harden-deliver` | Build, test, review | code, PR | Code owner |
 
 ```
 <artifacts_root>/<feature>/harden/
   index.md                     # intents, order, dependencies, status
-  01-<slug>/intent.md spec.md plan.md
+  01-<slug>/intent.md spec.md
   02-<slug>/...
 ```
 
@@ -49,7 +49,8 @@ Read the evidence pack and the beta code, then propose intents:
 - **Only what was used.** Behaviors marked `drop` get no intent; they die with the beta.
 - **Data and contract first.** Intent 01 is usually the durable data model, the migration from the `beta_<feature>_*` namespace (tables and any namespaced columns on core tables), and the public interface. Other intents depend on it.
 - **One source of truth for data.** From the moment the data intent merges, users' data lives in exactly one place. That intent's change set also switches the beta code still running to read and write through the new durable interface, so slices not yet hardened see the same data as hardened ones. After the cutover the `beta_<feature>_*` tables and columns are no longer written; they stay, read-only, until close-out. If the remaining beta code can't be switched in that change, the data intent's spec must say how both stores stay consistent (for example, writing to both) until the last slice lands.
-- **Small enough for one `plan.md` and one reviewable PR.** If not, split again.
+- **Floor touches become durable.** Each touch listed in probe.md belongs to an intent, whose spec flags the matching policy owner. The durable version replaces a code touch; nothing from the beta stays in floor code.
+- **Small enough for one spec and one reviewable PR.** If not, split again.
 - **Last intent closes out:** removes the flag, the Beta label and anything left in `<beta_root>/<feature>/`.
 
 Write `harden/index.md` from `templates/index.md`. Every acceptance test not marked `drop` belongs to exactly one intent.
@@ -76,7 +77,7 @@ Read `index.md` and each intent folder, update every intent's status from its ar
 | Intent status | Next |
 |---|---|
 | `todo`, `intent`, `spec` | `harden-define` for that intent |
-| `plan`, `build`, `test`, `review` | `harden-deliver` for that intent |
+| `build`, `test`, `review` | `harden-deliver` for that intent |
 | `done` | nothing |
 
 Run intents in dependency order. Intents with no dependency between them and no shared files can run in parallel, each in its own branch (and worktree, if the team uses them). Start with 2–3 in parallel and add more only while reviewers keep up.
@@ -90,6 +91,7 @@ When every intent is `done`, confirm:
 **Beta:**
 
 - nothing left in `<beta_root>/<feature>/`, no `thought-viber:beta:<feature>` markers (including the acceptance-test registration), no `beta.<feature>` flag;
+- no floor touch from the beta left: each was replaced by durable code;
 - beta data migrated, nothing has written to the `beta_<feature>_*` tables and columns since the cutover, and they are dropped only after the owner confirms the migration;
 - every incident in `feedback.md` has a regression test or eval;
 - probe status set to `durable`.
