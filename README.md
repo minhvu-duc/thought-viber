@@ -17,7 +17,8 @@ Beta flow    idea ─► vibe ─► watch ─► verdict ─┬─ keep   ─�
                                                └─ kill   ─► reap
 
 SDLC flow    plan ─► design ─► build ─► test
-                     └──── per intent ─────┘
+              ▲                          │
+              └─────── per intent ───────┘
 ```
 
 A kept beta's plan comes from `transition`, and its intents run in this order:
@@ -46,6 +47,15 @@ intent 00: remove the beta  ─►  intent 01: data  ─►  intent 02 ...  ─�
 | `design` | The spec for one intent: behaviors, interfaces, data, errors and acceptance tests. Spec only, no implementation plan. The user approves it. |
 | `build` | Acceptance tests first, then the code. For a kept beta, intent 00 deletes the beta code completely and each later intent turns its kept black-box tests back on. |
 | `test` | Runs everything, checks the work against the spec with fresh eyes, and opens the PR for normal review. On the last intent, confirms the feature is done and, for a kept beta, that every kept black-box test passes. |
+
+## Where to start
+
+Ask yourself: would you still build it if nobody used it?
+
+- **No, it's a bet → start with `idea`.** A new screen, a shortcut, an AI helper, anything where usage decides whether it stays. Say "idea: <the feature>" and the flow takes it from there: vibe, watch, verdict. If it's kept, `transition` hands it to the SDLC.
+- **Yes, it has to exist → start with `plan`.** Sign-in, payments, the core schema, a security fix, something a customer or contract requires. Also anything that would be hard to reap, like a change to shared data or an API other teams call. Say "plan: <the feature>" and go plan, design, build, test.
+
+Not sure? Start with `idea`. A bet that turns out to be essential gets kept and moves to the SDLC anyway. Run `watch` at any time to see every beta and feature and what to do next.
 
 ## Beta code
 
