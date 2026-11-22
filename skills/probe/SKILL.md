@@ -11,7 +11,7 @@ If no usage result would stop the team building it (auth, the user model, a cont
 
 ## Steps
 
-1. **Load config.** Read `.thought-viber/config.yaml`. If it's missing, create it from `templates/config.yaml`: detect the stack, propose `beta_root`, `public_interface_convention`, `public_interfaces`, `floor_paths`, `flag_system` and the telemetry source, show the default `safety_floor` list, and confirm all of them with the user. The user may add, remove or reword safety floor items. For `flag_system`, explain the trade-off and let the user choose: a runtime flag system switches the feature on and off instantly; flags in code or config only switch on the next deploy.
+1. **Load config.** Read `.thought-viber/config.yaml`. If it's missing, create it from `templates/config.yaml`: detect the stack, propose `beta_root`, `public_interface_convention`, `public_interfaces`, `floor_paths`, `flag_system` and the telemetry source, show the default `safety_floor` list, and confirm all of them with the user. The user may add, remove or reword safety floor items. For `flag_system`, explain the trade-off and let the user choose: a runtime flag system switches the feature on and off instantly; flags in code or config only switch on the next deploy. If the flag check or the telemetry store doesn't exist in the code yet, say so: it's built once as a `platform` feature with `direct` (see its "Prepare the boundary" step), before `vibe` can start.
 
 2. **Check capacity.** Count features whose probe status is `building`, `live` or `hardening` (beta code is still in the repo for all three). At `max_live_betas`, stop, list them, and suggest running `verdict` or `reap` on one first.
 

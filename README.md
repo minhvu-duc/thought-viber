@@ -49,7 +49,7 @@ A beta answers "does this feature deserve to exist?" Use `direct` when the answe
 - Records why there's no beta: **foundation** (every user goes through it, or other features build on it), or **obligation** (a contract, regulation or partner requires it). Touching the safety floor isn't a reason on its own: a beta can touch the floor once you're warned and accept it.
 - Pins down the outcome, the behaviors in scope and an explicit **out-of-scope list**. With no usage data to say what to drop, that list is what keeps the build small.
 - Names any interfaces future betas may call, and the code paths of any safety-floor work. As each is built, its path goes into `public_interfaces` or `floor_paths`, so gate knows what betas may use and which changes need an accepted floor touch.
-- Prepares the boundary on first use: agrees how durable code marks its public interfaces (`public_interface_convention`, e.g. `src/<module>/public/**`), and adds the boundary check to CI before any beta exists.
+- Prepares the boundary on first use: agrees how durable code marks its public interfaces (`public_interface_convention`, e.g. `src/<module>/public/**`), and adds the boundary check to CI before any beta exists. If the app has no flag check or telemetry store yet, it proposes a `platform` direct feature to build them, since every beta needs both.
 
 **You get** `brief.md`. **The product owner confirms it**, and from then on its scope can only change through a recorded entry. Then `harden` splits it into intents as for a kept beta, with no flag, telemetry, trial, migration or close-out, and no hardening clock. Direct features don't count against `max_live_betas`.
 

@@ -16,6 +16,11 @@ What the direct path loses is usage data, the evidence that tells `harden` what 
 2. **Prepare the boundary.** Direct features usually build the core that betas will attach to, so set up what `vibe` and `gate` rely on now, while there's little code to rearrange. Skip whatever is already in place.
    - **Public interface convention.** If config's `public_interface_convention` is empty, agree with the user how durable code will mark what betas may import: a folder per module (`src/<module>/public/**`) or each module's entry file (`packages/<module>/index.ts`). Pick what fits the stack's habits, and record it in config. What matters is that public code is identifiable by path and never shares a file with internal code, so `public_interfaces` can name it with a glob.
    - **Boundary check.** If the repo has no boundary check yet, add it as `vibe` describes in its "Before building" step 2, wired into CI and the normal test command, as its own reviewed change. With no betas yet it passes trivially; it's there so durable code never starts importing from `<beta_root>/`, and so the first beta meets a check that already runs.
+   - **Flags and telemetry.** Config's `flag_system` and `telemetry.source` say which flag system and telemetry store to use; they don't build them. If the code isn't there yet, tell the user it's foundation work every beta needs, and propose a `platform` direct feature for it, briefed before or alongside this one. Its behaviors:
+     - a flag check that reads `beta.<feature>`, defaults to off, and can target the exposure a probe chooses (a user segment or a % rollout);
+     - a way to switch a flag on and off that matches `flag_system` (instantly for a runtime flag system, on the next deploy for one in config);
+     - a telemetry call that records an event name, user, properties and time to the store `telemetry.source` reads;
+     - a public interface for both, so beta code can call them.
 
 3. **Check the feature belongs on this path.** Ask the user: *"Is there a result that would make you not build this?"*
    - **No**: the feature will be used regardless. Continue.
