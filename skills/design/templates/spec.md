@@ -1,6 +1,6 @@
-# Spec NN: <piece>
+# Spec NN: <intent>
 
-- Plan: `plan.md`, piece NN
+- Plan: `plan.md`, intent NN
 - Approved by: <name>, <YYYY-MM-DD>
 
 ## Behaviors

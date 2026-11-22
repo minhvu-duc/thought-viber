@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Start a thought-viber permanent feature, the first step of the SDLC flow (plan, design, build, test). Use for a feature that will be built whether or not anyone uses it — sign-in, the core schema, something a contract requires. Writes what it does, what it doesn't, and the pieces to build in order. For a kept beta, use transition instead.
+description: Start a thought-viber permanent feature, the first step of the SDLC flow (plan, design, build, test). Use for a feature that will be built whether or not anyone uses it — sign-in, the core schema, something a contract requires. Writes what it does, what it doesn't, and the small intents to build in order. For a kept beta, use transition instead.
 ---
 
 # plan
@@ -14,7 +14,7 @@ Permanent code is code someone owns: decisions written down, every file explaina
    - **Out of scope:** name the tempting extras. Anything not in scope is out.
    - **Constraints:** compliance, deadlines, compatibility, performance.
 3. **Check for beta code.** If the feature would use code in the beta folder or marked `thought-viber:beta:*`, follow the beta-code rule in the project's agent instructions: warn the user, suggest a way around it, and record the choice in the plan.
-4. **Split into pieces.** One outcome each, small enough for one spec and one PR. Data and interfaces first. Note what each depends on.
-5. **Write** `.thought-viber/features/<feature>/plan.md` from `templates/plan.md` with `from: plan`, leaving out "From the beta". The user approves it. Then `design` the first piece.
+4. **Break it into intents.** Each intent is one user-visible outcome, small and clear enough for one spec and one PR. If you can't say it in one sentence, split it. Data and interfaces first. Every in-scope behavior belongs to exactly one intent. Note what each depends on.
+5. **Write** `.thought-viber/features/<feature>/plan.md` from `templates/plan.md` with `from: plan`, leaving out "From the beta" and intent 00. The user approves it. Then `design` the first intent.
 
 After approval, scope changes go under Changes with a date and reason, not as silent edits.

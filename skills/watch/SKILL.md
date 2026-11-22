@@ -22,7 +22,7 @@ Looks and writes down what it saw. It never changes code, flags or data.
 
 ## Everything
 
-With no feature named, read every `.thought-viber/betas/*.md` and `.thought-viber/features/*/plan.md` and show one line each: name, status, owner, days left or next piece, latest usage, and what to do next.
+With no feature named, read every `.thought-viber/betas/*.md` and `.thought-viber/features/*/plan.md` and show one line each: name, status, owner, days left or next intent, latest usage, and what to do next.
 
 Point out first:
 
@@ -30,6 +30,6 @@ Point out first:
 - killed betas not yet reaped → `reap`;
 - kept betas with no plan yet → `transition`;
 - betas with entries under "Depended on by", since reaping them will need care;
-- plans with a piece waiting on someone: `design`, `build` or `test` for the next one.
+- plans with an intent waiting on someone: `design`, `build` or `test` for the next one.
 
 If nothing needs attention, say so in one line.
