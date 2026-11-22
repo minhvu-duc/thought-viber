@@ -37,10 +37,16 @@ confirmed:              # set when the owner confirms this brief
 <compliance, deadlines, compatibility, performance>
 
 ## Interfaces for betas
-<durable interfaces this feature provides that future betas may call (they go into config `public_interfaces`), or "none">
+<!-- Durable interfaces future betas may call, each at a path following config
+     `public_interface_convention`. They go into `public_interfaces` as they're built. -->
+| Interface | Path | Built by intent |
+|---|---|---|
 
 ## Safety floor
-<floor items from config it touches, or "none". Each spec flags the matching policy owners.>
+<!-- Floor items from config this feature touches, and the code paths that implement them.
+     The paths go into `floor_paths` as they're built. "none" if it touches no floor item. -->
+| Floor item | Paths | Built by intent |
+|---|---|---|
 
 ## Changes after confirmation
 <!-- YYYY-MM-DD — change — reason — approved by. Never edit Behaviors or Out of scope above after confirmation. -->

@@ -24,8 +24,13 @@ telemetry:
   event_prefix: beta.                 # events = beta.<feature>.<event>
   source: ""                          # where verdict reads usage: e.g. posthog, amplitude, sql:<query file>, logs
 
+# How durable code marks what betas may import, so public_interfaces can name it by path.
+# Public and internal code must not share files, or no glob can tell them apart.
+public_interface_convention: ""       # e.g. "src/<module>/public/**", "packages/<module>/index.ts"
+
 # Durable modules beta code may import, including facades and extension points added
 # for betas (see vibe → Durable prep). Everything else in durable code is off limits.
+# Each entry follows public_interface_convention.
 public_interfaces: []                 # e.g. ["src/api/public/**", "packages/sdk/**", "src/checkout/extensions/**"]
 
 # Safety floor: beta code may never change these. The list below is the default;
@@ -38,4 +43,5 @@ safety_floor:
   - secrets
   - existing core schema          # new namespaced beta_<feature>_* columns are allowed
 # Code paths that implement the safety floor. Beta changes here fail the gate.
+# A direct feature that builds floor code adds its paths here in the same change.
 floor_paths: []                       # e.g. ["src/auth/**", "src/billing/**", "src/permissions/**"]

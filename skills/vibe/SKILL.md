@@ -10,7 +10,7 @@ Speed is the goal. Nobody will read this code, so the boundary — not the code 
 ## Before building
 
 1. Read `probe.md` (status must be `building`) and `.thought-viber/config.yaml`.
-2. Make sure the boundary is enforced mechanically. If the repo has no check yet, add one and wire it into CI and the normal test command:
+2. Make sure the boundary is enforced mechanically. If the repo has no check yet (`direct` may already have added one), add one and wire it into CI and the normal test command:
    - durable code must not import anything under `<beta_root>/`;
    - beta code may import durable code only from `public_interfaces`.
 
@@ -25,7 +25,7 @@ Sometimes the beta needs something durable code doesn't offer yet: a facade over
    - **Facade:** a thin public function or endpoint over existing logic, with no new behavior.
    - **Extension point:** a slot, strategy or hook in durable code. Its default is exactly today's behavior; the beta registers an implementation that is used only when `beta.<feature>` is on.
 2. It lands as its own normal change (PR), separate from the beta, reviewed and approved by a human like any durable code. Nothing beta-specific goes in it.
-3. Add its path to `public_interfaces` in config and mark it done in probe.md → Durable prep.
+3. Put it at a path that follows config's `public_interface_convention` (if that's empty, agree one with the user and record it), add the path to `public_interfaces`, and mark it done in probe.md → Durable prep.
 4. Then build the beta against it.
 
 The prep stays durable after the beta is reaped; `reap` lists it so the owner can keep or remove it.

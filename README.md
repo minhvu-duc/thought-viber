@@ -48,11 +48,12 @@ A beta answers "does this feature deserve to exist?" Use `direct` when the answe
 - Asks one question: *is there a result that would make you not build this?* If the answer is "if users don't use it", that's a demand question, and it sends you to `probe`. Knowing *what* to build isn't the same as knowing *whether* to.
 - Records why there's no beta: **foundation** (every user goes through it, or other features build on it), **obligation** (a contract, regulation or partner requires it), or **safety floor** (it can't be a beta).
 - Pins down the outcome, the behaviors in scope and an explicit **out-of-scope list**. With no usage data to say what to drop, that list is what keeps the build small.
-- Names any interfaces future betas may call. They go into `public_interfaces` as they're built.
+- Names any interfaces future betas may call, and the code paths of any safety-floor work. As each is built, its path goes into `public_interfaces` or `floor_paths`, so gate knows what betas may use and what they may never touch.
+- Prepares the boundary on first use: agrees how durable code marks its public interfaces (`public_interface_convention`, e.g. `src/<module>/public/**`), and adds the boundary check to CI before any beta exists.
 
 **You get** `brief.md`. **The product owner confirms it**, and from then on its scope can only change through a recorded entry. Then `harden` splits it into intents as for a kept beta, with no flag, telemetry, trial, migration or close-out, and no hardening clock. Direct features don't count against `max_live_betas`.
 
-On a new project this usually comes first: betas reach durable code only through declared public interfaces, so the core they attach to (auth, users, the base schema) has to exist before there's anything to vibe on.
+On a new project this usually comes first: betas reach durable code only through declared public interfaces, so the core they attach to (auth, users, the base schema) has to exist before there's anything to vibe on. thought-viber doesn't impose a `core/` folder; durable code can live anywhere, as long as its public surface and its safety-floor code can be named by path.
 
 ### 1. `probe` — decide what you're testing
 

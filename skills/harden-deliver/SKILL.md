@@ -26,7 +26,7 @@ Plan without editing anything (use the agent's plan or read-only mode if it has 
 - **These tests are locked.** The agent may not edit, skip or delete them; if the agent supports hooks or file-protection rules, recommend one that blocks edits to them. If a test is genuinely wrong, stop and ask the product owner, and record the change in `spec.md`.
 - Implement per `plan.md`, following the project's agent instruction file (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md` or equivalent). When the agent makes the same mistake twice, add a line to it.
 - Bug found? Failing test first, commit, then fix.
-- If this intent builds an interface listed under "Interfaces for betas" in a direct feature's `brief.md`, add its path to config's `public_interfaces` in the same change.
+- Direct feature: if this intent builds an interface listed under "Interfaces for betas" in `brief.md`, put it at a path that follows config's `public_interface_convention` and add that path to `public_interfaces`. If it builds code listed under "Safety floor", add those paths to `floor_paths`. Both in the same change.
 - **Same change set:** reroute this slice from beta to durable and delete the beta code it replaces, including its marked wiring lines. Beta and durable code coexist only between slices, never for the same behavior.
 - **Data intent:** in the same change set, migrate the beta data and switch the beta code still running to the durable interface, per the Cutover section of `spec.md`. Prove it: the acceptance tests of slices not yet hardened still pass against the migrated data, and nothing writes to `beta_<feature>_*` after the cutover.
 

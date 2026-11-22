@@ -61,6 +61,7 @@ Read brief.md and the codebase, then propose intents by the same rules, with the
 - **Only what the brief lists**, in place of "only what was used": every behavior under Behaviors belongs to exactly one intent, and no intent does anything the brief doesn't list. Intents own behaviors, not existing acceptance tests; each intent's spec turns its behaviors into acceptance tests.
 - **Data and contract first**, with no beta data to migrate and no cutover. If the feature changes existing core schema, the data intent's spec covers that change.
 - **No close-out intent:** there is no flag, label or beta folder to remove.
+- **Fill in the brief's "Built by intent" columns** under Interfaces for betas and Safety floor, so each path has an intent that registers it in config.
 
 Write `harden/index.md` from `templates/index.md`, leaving out "Dropped from the beta" and the close-out row.
 
@@ -98,7 +99,9 @@ Report: intents merged, what was dropped from the beta and why, and who owns eac
 **Direct:**
 
 - every behavior in brief.md has a locked acceptance test in the durable suite;
-- every path under "Interfaces for betas" is in config's `public_interfaces`;
+- every interface under "Interfaces for betas" sits at a path that follows `public_interface_convention`, and that path is in config's `public_interfaces`;
+- every path under "Safety floor" is in config's `floor_paths`;
+- the boundary check runs in CI;
 - brief status set to `durable`.
 
 Report: intents merged, any changes recorded after confirmation, and who owns each part.
